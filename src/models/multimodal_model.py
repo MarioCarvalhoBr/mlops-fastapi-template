@@ -1,12 +1,15 @@
 import os
+
 import torch
 import torch.nn.functional as F
 from PIL import Image
-from transformers import CLIPProcessor, CLIPModel
+from transformers import CLIPModel, CLIPProcessor
+
 from src.config.config import load_config
 from src.core.logger import logger
 
 settings = load_config()
+
 
 class MultimodalModel:
     """
@@ -18,13 +21,13 @@ class MultimodalModel:
         self.model_name = settings.multimodal_model_id
         self.version = "0.5.0"
         self.device = settings.device
-        
+
         if settings.hf_hub_offline:
             os.environ["TRANSFORMERS_OFFLINE"] = "1"
             logger.info("HF Offline Mode enabled for Multimodal Model.")
 
         logger.info(f"Loading multimodal model {self.model_name} on device: {self.device}")
-        
+
         # Load CLIP architecture
         self.model = CLIPModel.from_pretrained(self.model_name).to(self.device)
         self.processor = CLIPProcessor.from_pretrained(self.model_name)

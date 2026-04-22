@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
 from typing import Any, Dict
+
 import torch
 import yaml
 from pydantic_settings import BaseSettings
+
 
 class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
@@ -19,7 +21,7 @@ class Settings(BaseSettings):
     vision_confidence_threshold: float = 0.85
     # v0.4.0
     retrieval_model_id: str = "sentence-transformers/all-MiniLM-L6-v2"
-    
+
     # v0.5.0 - Multimodal Configs
     multimodal_model_id: str = "openai/clip-vit-base-patch32"
     catalog_data_path: str = "data/catalog"
@@ -32,6 +34,7 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
         extra = "ignore"
 
+
 def load_yaml_config(path: str) -> Dict[str, Any]:
     config_path = Path(path)
     if not config_path.exists():
@@ -42,6 +45,7 @@ def load_yaml_config(path: str) -> Dict[str, Any]:
             return config if config is not None else {}
     except (yaml.YAMLError, Exception):
         return {}
+
 
 def load_config() -> Settings:
     settings = Settings()

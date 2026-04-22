@@ -1,16 +1,19 @@
 import io
+
 from PIL import Image, UnidentifiedImageError
+
+from src.config.config import load_config
 from src.core.logger import logger
 from src.models.object_detector import ObjectDetectorModel
-from src.config.config import load_config
 
 settings = load_config()
 _object_detector = ObjectDetectorModel()
 logger.info(f"Vision Service initialized with model: {_object_detector.model_name}")
 
+
 def analyze_product_image(image_bytes: bytes) -> dict:
     """
-    Validates the image payload, converts it to PIL format, 
+    Validates the image payload, converts it to PIL format,
     and extracts high-confidence objects.
     """
     if not image_bytes:
@@ -29,17 +32,19 @@ def analyze_product_image(image_bytes: bytes) -> dict:
 
     try:
         raw_predictions = _object_detector.predict(image)
-        
+
         # Filter predictions based on business confidence threshold
         detected_objects = []
         for pred in raw_predictions:
             if pred["score"] >= settings.vision_confidence_threshold:
-                detected_objects.append({
-                    "label": pred["label"],
-                    "confidence": round(pred["score"], 4),
-                    "bounding_box": pred["box"]
-                })
-        
+                detected_objects.append(
+                    {
+                        "label": pred["label"],
+                        "confidence": round(pred["score"], 4),
+                        "bounding_box": pred["box"],
+                    }
+                )
+
         # Sort by confidence descending
         detected_objects.sort(key=lambda x: x["confidence"], reverse=True)
 
@@ -49,8 +54,8 @@ def analyze_product_image(image_bytes: bytes) -> dict:
             "metadata": {
                 "model": _object_detector.model_name,
                 "version": _object_detector.version,
-                "threshold_applied": settings.vision_confidence_threshold
-            }
+                "threshold_applied": settings.vision_confidence_threshold,
+            },
         }
     except Exception as e:
         logger.error(f"Model inference failed: {str(e)}")

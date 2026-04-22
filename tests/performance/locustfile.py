@@ -17,9 +17,7 @@ class MLAPIUser(HttpUser):
         This task has weight 10, making it the most frequently called.
         """
         payload = {"input": "The movie was good"}
-        with self.client.post(
-            "/predict", params=payload, catch_response=True
-        ) as response:
+        with self.client.post("/predict", params=payload, catch_response=True) as response:
             if response.status_code == 200:
                 response_data = response.json()
                 if "prediction" in response_data:
@@ -37,6 +35,4 @@ class MLAPIUser(HttpUser):
         # Verify the API is reachable
         response = self.client.get("/health")
         if response.status_code != 200:
-            print(
-                f"Warning: API health check failed with status {response.status_code}"
-            )
+            print(f"Warning: API health check failed with status {response.status_code}")
