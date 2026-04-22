@@ -67,7 +67,8 @@ Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the pla
 - [x] **v0.3.0 - Vision Service:** Object detection using `facebook/detr-resnet-50`, multipart image uploads, and interactive bounding box rendering using HTML5 `<canvas>`.
 - [x] **v0.4.0 - Retrieval Service:** Semantic Search System using Sentence Embeddings (`sentence-transformers/all-MiniLM-L6-v2`) and in-memory cosine similarity matching.
 - [x] **v0.5.0 - Multimodal Search:** True zero-shot cross-modal retrieval mapping text and images to a joint vector space using CLIP (`openai/clip-vit-base-patch32`), backed by a physical file-based product catalog.
-
+- [x] **v0.6.0 - Testing and Performance:** Comprehensive unit and integration tests, code coverage reporting, and Locust load testing to validate API performance under concurrent pressure.
+- [x] **v0.7.0 - CI/CD and Dockerization:** GitHub Actions workflows for automated testing, code quality checks, and production-ready Docker configuration with model caching for seamless deployment.
 ---
 
 ## 🛠 Technologies Used
