@@ -2,6 +2,8 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0%2B-009688)](https://fastapi.tiangolo.com/)
+[![CI](https://github.com/MarioCarvalhoBr/mlops-fastapi-template/actions/workflows/ci.yml/badge.svg)](https://github.com/MarioCarvalhoBr/mlops-fastapi-template/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/MarioCarvalhoBr/mlops-fastapi-template/branch/main/graph/badge.svg)](https://codecov.io/gh/MarioCarvalhoBr/mlops-fastapi-template)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
