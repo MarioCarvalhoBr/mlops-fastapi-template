@@ -1,22 +1,25 @@
-# 🚀 MLOps FastAPI Template
+# 🚀 Retail-AI (MLOps FastAPI Template)
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0%2B-009688)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This repository provides a production-grade template for serving Machine Learning models using **FastAPI**. The project focuses on rigorous Software Engineering patterns applied to MLOps, including clean architecture, automated testing, and performance monitoring.
+This repository provides a production-grade template for serving Machine Learning models using **FastAPI**, tailored for E-commerce intelligence (**Retail-AI**). The project focuses on rigorous Software Engineering patterns applied to MLOps, including clean architecture, automated testing, performance monitoring, and real-time frontend integration.
 
 ## 📋 Table of Contents
-- [🚀 MLOps FastAPI Template](#-mlops-fastapi-template)
+- [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-mlops-fastapi-template)
   - [📋 Table of Contents](#-table-of-contents)
   - [🌟 Overview](#-overview)
+  - [🗺️ Project Roadmap](#️-project-roadmap)
   - [🛠 Technologies Used](#-technologies-used)
   - [📂 Project Structure](#-project-structure)
   - [⚙️ Installation and Configuration](#️-installation-and-configuration)
     - [Prerequisites](#prerequisites)
     - [Step by Step](#step-by-step)
   - [🚀 Usage and Execution](#-usage-and-execution)
+    - [Starting the Backend](#starting-the-backend)
+    - [Running the Frontend Dashboard](#running-the-frontend-dashboard)
   - [🧪 Code Quality and Tests](#-code-quality-and-tests)
     - [Execute Automated Tests](#execute-automated-tests)
     - [Linting and Formatting](#linting-and-formatting)
@@ -30,19 +33,30 @@ This repository provides a production-grade template for serving Machine Learnin
 
 ## 🌟 Overview
 
-Unlike isolated research scripts, this project implements a robust **Service Layer** that isolates the inference logic from the web framework. The architecture follows the `src/` layout, ensuring the source code is testable, modular, and ready for horizontal scalability in cloud environments or containers.
+Unlike isolated research scripts, this project implements a robust **Service Layer** that isolates the inference logic from the web framework. The architecture follows the `src/` layout, ensuring the source code is testable, modular, and ready for horizontal scalability in cloud environments or containers. It seamlessly integrates open-source Hugging Face models for NLP (Sentiment Analysis) and Computer Vision (Object Detection) directly into a reactive web dashboard.
+
+---
+
+## 🗺️ Project Roadmap
+
+- [x] **v0.1.0 - Foundation:** FastAPI setup, Clean Architecture, Pydantic V2 validation, Pytest, Locust load testing, and basic CI/CD.
+- [x] **v0.2.0 - Retail-AI Sentiment:** Integration with Hugging Face (`nlptown/bert-base-multilingual-uncased-sentiment`), offline mode caching, GPU hardware acceleration, and initial Vue.js Frontend.
+- [x] **v0.3.0 - Vision Service:** Object detection using `facebook/detr-resnet-50`, multipart image uploads, and interactive bounding box rendering using HTML5 `<canvas>`.
+- [ ] **v0.4.0 - Retrieval Service:** Semantic Search and Recommendation System using Sentence Embeddings and Vector Search databases.
+
+---
 
 ## 🛠 Technologies Used
 
-The project integrates the most modern tools of the Python ecosystem for MLOps:
+The project integrates the most modern tools of the Python and Web ecosystem for MLOps:
 
 * **[FastAPI](https://fastapi.tiangolo.com/):** High-performance web framework for building APIs.
-* **[Pydantic V2](https://docs.pydantic.dev/):** Data validation and configuration management via environment variables.
+* **[Hugging Face Transformers](https://huggingface.co/docs/transformers/index):** State-of-the-art open-source models for NLP and Computer Vision.
+* **[Vue.js 3](https://vuejs.org/) & [Tailwind CSS](https://tailwindcss.com/):** Reactive frontend dashboard for real-time AI interaction via CDN.
+* **[Pydantic V2](https://docs.pydantic.dev/):** Data validation and configuration management via environment variables (Security by Design).
 * **[Poetry](https://python-poetry.org/):** Dependency management and deterministic virtual environments.
-* **[Pytest](https://docs.pytest.org/):** Unit and integration testing suite.
-* **[Locust](https://locust.io/):** Load testing to validate latency and RPS (Requests Per Second) under pressure.
-* **[MyPy](http://mypy-lang.org/):** Static type checking to prevent runtime errors.
-* **[Black](https://github.com/psf/black) & [isort](https://pycqa.github.io/isort/):** Automatic code formatting and import organization.
+* **[Pytest](https://docs.pytest.org/) & [Locust](https://locust.io/):** Unit/integration testing suite and latency/RPS load testing.
+* **[MyPy](http://mypy-lang.org/), [Black](https://github.com/psf/black) & [isort](https://pycqa.github.io/isort/):** Static type checking and automatic code formatting.
 
 ---
 
@@ -52,18 +66,21 @@ The organization follows the principle of separation of concerns:
 
 ```text
 mlops-fastapi-template/
+├── frontend/                   # Vue.js 3 + Tailwind CSS Dashboard
+│   └── index.html              # Reactive UI for API interaction
 ├── src/                        # Application source code
 │   ├── api/                    # FastAPI Routes and Endpoints
 │   ├── config/                 # Configuration management (Settings/Pydantic)
 │   ├── core/                   # Core components (Logger, etc.)
-│   ├── models/                 # ML Models abstraction (Wrappers)
-│   ├── services/               # Business and inference logic
+│   ├── models/                 # ML Models abstraction (Hugging Face Wrappers)
+│   ├── services/               # Business and inference logic orchestration
 │   ├── utils/                  # Helper functions
 │   └── main.py                 # Application entry point
 ├── tests/                      # Automated test suite
 │   ├── unit/                   # Isolated function tests
 │   ├── integration/            # Endpoints and system integration tests
 │   └── performance/            # Load testing scripts (Locust)
+├── .github/workflows/          # GitHub Actions CI/CD pipelines
 ├── configs/                    # YAML configuration files
 ├── Makefile                    # Automation of common tasks
 ├── pyproject.toml              # Project dependencies and metadata
@@ -82,7 +99,7 @@ mlops-fastapi-template/
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/MarioCarvalhoBr/mlops-fastapi-template.git
+    git clone [https://github.com/MarioCarvalhoBr/mlops-fastapi-template.git](https://github.com/MarioCarvalhoBr/mlops-fastapi-template.git)
     cd mlops-fastapi-template
     ```
 
@@ -94,21 +111,29 @@ mlops-fastapi-template/
     ```
 
 3.  **Environment Variables:**
-    Make sure to configure your `.env` file (created automatically from `.env.example` by the setup script).
+    Make sure to configure your `.env` file (created automatically from `.env.example`). You can toggle the `HF_HUB_OFFLINE=1` flag if models are already cached.
 
 ---
 
 ## 🚀 Usage and Execution
 
-To start the development server with *hot-reload*:
+### Starting the Backend
+To start the FastAPI development server with *hot-reload*:
 
 ```bash
 poetry run uvicorn src.main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`. Access the interactive documentation at:
-* **Swagger UI:** `http://localhost:8000/docs`
-* **ReDoc:** `http://localhost:8000/redoc`
+The API will be available at `http://localhost:8000`. Access the interactive Swagger UI documentation at:
+* **Docs:** `http://localhost:8000/docs`
+
+### Running the Frontend Dashboard
+The frontend is built as a lightweight, reactive Single Page Application (SPA). No Node.js or npm installation is required!
+
+1. Ensure the FastAPI backend is running and healthy.
+2. Simply open the `frontend/index.html` file in your favorite web browser.
+   * *Tip: You can double-click the file in your file explorer, use a Live Server extension in VS Code, or run a simple Python HTTP server: `python -m http.server 5500 -d frontend/`*
+3. Navigate between the **Sentiment Analysis** and **Visual Detection** tabs to interact with the AI models in real-time.
 
 ---
 
@@ -133,14 +158,14 @@ make type-check  # Runs MyPy for static type verification
 
 ## 📈 Load Testing
 
-To validate how the API behaves with multiple simultaneous users:
+To validate how the API behaves under concurrent pressure:
 
-1.  Ensure the API is running in one terminal.
-2.  In another terminal, execute:
+1. Ensure the backend API is running in one terminal.
+2. In another terminal, execute:
     ```bash
     make load-test
     ```
-3.  Access `http://localhost:8089` to configure the number of users and observe real-time latency graphs.
+3. Access `http://localhost:8089` to configure the number of simulated users and observe real-time latency graphs.
 
 ---
 
