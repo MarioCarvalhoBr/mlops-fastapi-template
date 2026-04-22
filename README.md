@@ -7,6 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+| Package         | ![Last Commit](https://img.shields.io/github/last-commit/MarioCarvalhoBr/mlops-fastapi-template?style=flat&logo=git&logoColor=white&color=0080ff) ![Top Language](https://img.shields.io/github/languages/top/MarioCarvalhoBr/mlops-fastapi-template?style=flat&color=0080ff) ![Language Count](https://img.shields.io/github/languages/count/MarioCarvalhoBr/mlops-fastapi-template?style=flat&color=0080ff) 
+
 This repository provides a production-grade template for serving Machine Learning models using **FastAPI**, tailored for E-commerce intelligence (**Retail-AI**). The project focuses on rigorous Software Engineering patterns applied to MLOps, including clean architecture, automated testing, performance monitoring, and real-time frontend integration.
 
 ## 📋 Table of Contents
