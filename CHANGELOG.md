@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-04-22
+
+### Added
+- **Multimodal Service**: Introduced true zero-shot cross-modal retrieval mapping Text and Images into a joint vector space using the CLIP architecture (`openai/clip-vit-base-patch32`).
+- **File-based Catalog Engine**: Migrated from hardcoded dictionaries to a physical data structure standard (`data/catalog/<product_id>/`). Supports `info.json` and `n` images per product directory.
+- **Multimodal Endpoint**: Added `/multimodal-search` accepting concurrent `multipart/form-data` payloads (Text Query + Image File) and applying late fusion embedding strategies.
+- **Frontend Expansion**: Added the new "Multimodal Search" tab, retaining all previous capabilities without degradation.
+
+
 ## [0.4.0] - 2026-04-22
 
 ### Added
@@ -63,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.5.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.5.0
 [0.4.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.4.0
 [0.3.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.3.0
 [0.2.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.2.0

@@ -6,28 +6,24 @@ import yaml
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    """
-    Centralized configuration settings for the Retail-AI system.
-    Values are loaded from environment variables or defined defaults.
-    """
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     debug: bool = False
     environment: str = "development"
     log_level: str = "INFO"
 
-    # AI & MLOps Configs (v0.2.0)
+    # v0.2.0
     sentiment_model_id: str = "nlptown/bert-base-multilingual-uncased-sentiment"
-    
-    # AI & MLOps Configs (v0.3.0)
+    # v0.3.0
     vision_model_id: str = "facebook/detr-resnet-50"
     vision_confidence_threshold: float = 0.85
-
-    # AI & MLOps Configs (v0.4.0)
-    # Lightweight sentence embedding model for semantic search
+    # v0.4.0
     retrieval_model_id: str = "sentence-transformers/all-MiniLM-L6-v2"
     
-    # Hardware acceleration detection (CUDA or CPU)
+    # v0.5.0 - Multimodal Configs
+    multimodal_model_id: str = "openai/clip-vit-base-patch32"
+    catalog_data_path: str = "data/catalog"
+
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     hf_hub_offline: bool = False
 
@@ -37,7 +33,6 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 def load_yaml_config(path: str) -> Dict[str, Any]:
-    """Loads configuration from a YAML file."""
     config_path = Path(path)
     if not config_path.exists():
         return {}
@@ -49,7 +44,6 @@ def load_yaml_config(path: str) -> Dict[str, Any]:
         return {}
 
 def load_config() -> Settings:
-    """Orchestrates configuration loading, merging defaults and YAML."""
     settings = Settings()
     config_path = "configs/config.yaml"
     if os.path.exists(config_path):
