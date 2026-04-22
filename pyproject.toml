@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mlops-fastapi-template"
-version = "0.5.1"
+version = "0.6.0"
 description = "Retail-AI: Intelligence Engine for E-commerce using FastAPI and Hugging Face"
 authors = ["Mário de Araújo Carvalho"]
 readme = "README.md"

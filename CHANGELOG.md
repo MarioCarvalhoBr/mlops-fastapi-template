@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-04-22
+
+### Added
+- **Comprehensive Testing Suite**: Achieved full unit and integration testing coverage for the `sentiment`, `vision`, `retrieval`, and `multimodal` modules, utilizing `unittest.mock` for fast, offline, and deterministic CI/CD execution.
+- **AI Assistant Guidelines**: Added `.github/copilot-instructions.md` establishing strict architectural, clean code, and SOLID principles for AI-assisted development.
+
+### Fixed
+- **Static Typing (MyPy)**: Resolved Python 3.12 syntax mismatches (pattern matching compatibility) and enforced strict `Optional` typing across all services and routes.
+- **Cyclomatic Complexity (Flake8)**: Refactored `load_multimodal_catalog` using the Extract Method pattern to adhere to the strict complexity threshold (McCabe C901), fully respecting the Single Responsibility Principle.
+- **Service Layer Contracts**: Corrected exception propagation mapping (`ValueError` vs `RuntimeError`) between the Model, Service, and API layers to ensure predictable HTTP status codes.
+
 ## [0.5.0] - 2026-04-22
 
 ### Added
@@ -72,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.6.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.6.0
 [0.5.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.5.0
 [0.4.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.4.0
 [0.3.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.3.0
