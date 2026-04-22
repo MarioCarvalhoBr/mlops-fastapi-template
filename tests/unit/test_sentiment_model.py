@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from src.models.sentiment_model import SentimentModel
 
 
@@ -16,7 +14,7 @@ class TestSentimentModel:
     def test_model_initialization(self, mock_pipeline):
         """Test if the model initializes the HF pipeline correctly."""
         model = SentimentModel()
-        
+
         mock_pipeline.assert_called_once()
         assert model.model_name == "nlptown/bert-base-multilingual-uncased-sentiment"
         assert model.version == "0.2.0"

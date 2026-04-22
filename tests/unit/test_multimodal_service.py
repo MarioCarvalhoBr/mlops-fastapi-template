@@ -1,14 +1,13 @@
 import io
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import torch
 from PIL import Image
 
-from src.services.multimodal_service import search_multimodal_catalog
-
 # We will need to repatch internal variables for testing since they are module-level
 import src.services.multimodal_service as multimodal_service
+from src.services.multimodal_service import search_multimodal_catalog
 
 
 class TestMultimodalService:
@@ -25,9 +24,7 @@ class TestMultimodalService:
             {"id": "P002", "name": "Shoes", "category": "Shoes", "description": "For running"},
         ]
         # Two embeddings of size 4
-        multimodal_service._catalog_embeddings = torch.tensor(
-            [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0]]
-        )
+        multimodal_service._catalog_embeddings = torch.tensor([[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0]])
 
         yield
 
@@ -80,9 +77,7 @@ class TestMultimodalService:
         img.save(img_bytes, format="PNG")
         image_bytes = img_bytes.getvalue()
 
-        result = search_multimodal_catalog(
-            query_text="Backpack and Shoes", query_image_bytes=image_bytes, top_k=2
-        )
+        result = search_multimodal_catalog(query_text="Backpack and Shoes", query_image_bytes=image_bytes, top_k=2)
 
         assert result["query_type"] == "text+image"
         # The joint embedding is mean([1,0,0,0], [0,1,0,0]) = [0.5, 0.5, 0, 0]
@@ -103,6 +98,6 @@ class TestMultimodalService:
         """Test search behavior when catalog is empty."""
         multimodal_service._catalog_embeddings = None
         multimodal_service._catalog_items = []
-        
+
         with pytest.raises(RuntimeError, match="Catalog is empty or failed to load."):
             search_multimodal_catalog(query_text="Dummy")

@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
+
 class TestRetrievalAPI:
     """
     Integration tests for the Semantic Search / Retrieval endpoints.
@@ -20,14 +21,10 @@ class TestRetrievalAPI:
                     "name": "Wireless Noise-Canceling Headphones",
                     "category": "Electronics",
                     "description": "High-quality over-ear headphones.",
-                    "similarity_score": 0.985
+                    "similarity_score": 0.985,
                 }
             ],
-            "metadata": {
-                "model": "sentence-transformers/all-MiniLM-L6-v2",
-                "version": "0.4.0",
-                "catalog_size": 1
-            }
+            "metadata": {"model": "sentence-transformers/all-MiniLM-L6-v2", "version": "0.4.0", "catalog_size": 1},
         }
 
         payload = {"query": "headphones", "top_k": 1}
@@ -42,11 +39,11 @@ class TestRetrievalAPI:
 
     def test_semantic_search_validation_error_too_short(self, client: TestClient):
         """Test Pydantic min_length validation for the query."""
-        payload = {"query": "a", "top_k": 3} # Less than 2 characters
+        payload = {"query": "a", "top_k": 3}  # Less than 2 characters
         response = client.post("/semantic-search", json=payload)
 
         # 422 Unprocessable Entity
-        assert response.status_code == 422 
+        assert response.status_code == 422
         assert "detail" in response.json()
 
     def test_semantic_search_validation_error_top_k_bounds(self, client: TestClient):
@@ -54,8 +51,8 @@ class TestRetrievalAPI:
         # Test lower bound
         payload_low = {"query": "headphones", "top_k": 0}
         response_low = client.post("/semantic-search", json=payload_low)
-        assert response_low.status_code == 422 
-        
+        assert response_low.status_code == 422
+
         # Test upper bound
         payload_high = {"query": "headphones", "top_k": 15}
         response_high = client.post("/semantic-search", json=payload_high)

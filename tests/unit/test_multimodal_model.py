@@ -55,9 +55,7 @@ class TestMultimodalModel:
         text = "sample multimodal query"
         embeddings = model.encode_text(text)
 
-        mock_processor_instance.assert_called_once_with(
-            text=[text], return_tensors="pt", padding=True, truncation=True
-        )
+        mock_processor_instance.assert_called_once_with(text=[text], return_tensors="pt", padding=True, truncation=True)
         mock_model_instance.get_text_features.assert_called_once()
 
         assert isinstance(embeddings, torch.Tensor)

@@ -16,11 +16,7 @@ class TestSentimentAPI:
         mock_service.return_value = {
             "primary_sentiment": "positive",
             "confidence": 0.99,
-            "metadata": {
-                "model": "test-model",
-                "raw_label": "5 stars",
-                "version": "0.2.0"
-            }
+            "metadata": {"model": "test-model", "raw_label": "5 stars", "version": "0.2.0"},
         }
 
         payload = {"text": "I absolutely love this new laptop!"}
@@ -34,11 +30,11 @@ class TestSentimentAPI:
 
     def test_analyze_review_validation_error_too_short(self, client: TestClient):
         """Test Pydantic min_length validation (Security by Design)."""
-        payload = {"text": "ok"} # Less than 3 characters
+        payload = {"text": "ok"}  # Less than 3 characters
         response = client.post("/analyze-review", json=payload)
 
         # 422 Unprocessable Entity is FastAPI's default for Pydantic validation failures
-        assert response.status_code == 422 
+        assert response.status_code == 422
         assert "detail" in response.json()
 
     @patch("src.api.routes.analyze_product_review")

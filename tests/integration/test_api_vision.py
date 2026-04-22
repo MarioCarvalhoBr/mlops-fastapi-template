@@ -12,9 +12,7 @@ client = TestClient(app)
 @patch("src.api.routes.analyze_product_image")
 def test_detect_objects_success(mock_analyze: MagicMock) -> None:
     mock_analyze.return_value = {
-        "detected_objects": [
-            {"label": "laptop", "confidence": 0.95, "bounding_box": {"xmin": 0, "ymin": 0, "xmax": 1, "ymax": 1}}
-        ],
+        "detected_objects": [{"label": "laptop", "confidence": 0.95, "bounding_box": {"xmin": 0, "ymin": 0, "xmax": 1, "ymax": 1}}],
         "object_count": 1,
         "metadata": {"model": "test", "version": "1.0", "threshold_applied": 0.5},
     }
@@ -23,9 +21,7 @@ def test_detect_objects_success(mock_analyze: MagicMock) -> None:
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format="JPEG")
 
-    response = client.post(
-        "/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")}
-    )
+    response = client.post("/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")})
 
     assert response.status_code == 200
     assert response.json()["object_count"] == 1
@@ -47,9 +43,7 @@ def test_detect_objects_value_error(mock_analyze: MagicMock) -> None:
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format="JPEG")
 
-    response = client.post(
-        "/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")}
-    )
+    response = client.post("/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")})
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Bad image"
@@ -63,9 +57,7 @@ def test_detect_objects_runtime_error(mock_analyze: MagicMock) -> None:
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format="JPEG")
 
-    response = client.post(
-        "/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")}
-    )
+    response = client.post("/detect-objects", files={"file": ("test.jpg", img_byte_arr.getvalue(), "image/jpeg")})
 
     assert response.status_code == 500
     assert "Image processing failure" in response.json()["detail"]

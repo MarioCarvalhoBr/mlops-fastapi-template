@@ -4,11 +4,11 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from src.core.logger import logger
+from src.services.inference_service import predict_service
 from src.services.multimodal_service import search_multimodal_catalog
 from src.services.retrieval_service import search_similar_products
 from src.services.sentiment_service import analyze_product_review
 from src.services.vision_service import analyze_product_image
-from src.services.inference_service import predict_service
 
 router = APIRouter()
 
@@ -84,6 +84,7 @@ class MultimodalResponse(BaseModel):
 async def health_check():
     """Service health and version check."""
     return {"status": "ok", "version": "0.1.0"}
+
 
 @router.post("/predict")
 async def predict_route(input: str):

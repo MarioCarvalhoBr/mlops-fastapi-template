@@ -3,7 +3,6 @@ import io
 from PIL import Image
 
 
-
 def test_multimodal_search_missing_inputs(client):
     """Verify that omitting both query-text and image fails."""
     response = client.post("/multimodal-search")

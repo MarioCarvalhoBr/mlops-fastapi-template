@@ -15,11 +15,7 @@ class TestSentimentService:
     def test_analyze_product_review_success(self, mock_model):
         """Test successful review analysis formatting and metadata mapping."""
         # Setup mock model behavior
-        mock_model.predict.return_value = {
-            "label": "positive",
-            "score": 0.95,
-            "original_output": "4 stars"
-        }
+        mock_model.predict.return_value = {"label": "positive", "score": 0.95, "original_output": "4 stars"}
         mock_model.model_name = "mocked-bert-model"
         mock_model.version = "0.2.0"
 
