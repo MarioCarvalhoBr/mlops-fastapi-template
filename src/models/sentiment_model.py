@@ -22,7 +22,7 @@ class SentimentModel:
             "sentiment-analysis",
             model=self.model_name,
             device=0 if settings.device == "cuda" else -1,
-        ) # type: ignore
+        )  # type: ignore
 
     def predict(self, text: str) -> dict:
         result = self.classifier(text)[0]

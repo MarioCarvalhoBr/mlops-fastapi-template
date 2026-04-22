@@ -70,7 +70,7 @@ def _encode_product_images(images_dir: Path) -> list[torch.Tensor]:
     """Finds supported images in a directory and encodes them into tensors."""
     # Strict typing for the empty list prevents MyPy inference errors
     image_embs: list[torch.Tensor] = []
-    
+
     if not (images_dir.exists() and images_dir.is_dir()):
         return image_embs
 
@@ -156,11 +156,7 @@ def load_multimodal_catalog():
 load_multimodal_catalog()
 
 
-def search_multimodal_catalog(
-    query_text: Optional[str] = None, 
-    query_image_bytes: Optional[bytes] = None, 
-    top_k: int = 3
-) -> dict:
+def search_multimodal_catalog(query_text: Optional[str] = None, query_image_bytes: Optional[bytes] = None, top_k: int = 3) -> dict:
     """
     Executes a multimodal search combining text intent and visual features.
     Strictly types optional parameters to avoid implicit Optional violations.
