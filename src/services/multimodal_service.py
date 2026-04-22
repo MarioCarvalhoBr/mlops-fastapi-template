@@ -1,6 +1,7 @@
 import io
 import json
 from pathlib import Path
+from typing import Optional
 
 import torch
 from PIL import Image, ImageDraw
@@ -12,8 +13,8 @@ from src.models.multimodal_model import MultimodalModel
 settings = load_config()
 _multimodal_model = MultimodalModel()
 
-_catalog_items = []
-_catalog_embeddings = None
+_catalog_items: list[dict] = []
+_catalog_embeddings: Optional[torch.Tensor] = None
 
 SUPPORTED_IMAGE_EXTENSIONS = [
     "*.jpg",
@@ -67,7 +68,9 @@ def _create_dummy_catalog(base_path: Path):
 
 def _encode_product_images(images_dir: Path) -> list[torch.Tensor]:
     """Finds supported images in a directory and encodes them into tensors."""
-    image_embs = []
+    # Strict typing for the empty list prevents MyPy inference errors
+    image_embs: list[torch.Tensor] = []
+    
     if not (images_dir.exists() and images_dir.is_dir()):
         return image_embs
 
@@ -85,7 +88,7 @@ def _encode_product_images(images_dir: Path) -> list[torch.Tensor]:
     return image_embs
 
 
-def _process_product_directory(folder: Path) -> tuple[dict, torch.Tensor] | None:
+def _process_product_directory(folder: Path) -> Optional[tuple[dict, torch.Tensor]]:
     """
     Reads product metadata and images, computes joint embedding using Late Fusion.
     Returns a tuple of (metadata_dict, joint_tensor) or None on failure.
@@ -153,9 +156,14 @@ def load_multimodal_catalog():
 load_multimodal_catalog()
 
 
-def search_multimodal_catalog(query_text: str = None, query_image_bytes: bytes = None, top_k: int = 3) -> dict:
+def search_multimodal_catalog(
+    query_text: Optional[str] = None, 
+    query_image_bytes: Optional[bytes] = None, 
+    top_k: int = 3
+) -> dict:
     """
     Executes a multimodal search combining text intent and visual features.
+    Strictly types optional parameters to avoid implicit Optional violations.
     """
     if not _catalog_items or _catalog_embeddings is None:
         raise RuntimeError("Catalog is empty or failed to load.")
