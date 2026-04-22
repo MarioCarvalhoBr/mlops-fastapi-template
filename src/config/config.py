@@ -12,8 +12,14 @@ class Settings(BaseSettings):
     environment: str = "development"
     log_level: str = "INFO"
 
-    # IA & MLOps Configs (v0.2.0)
+    # Sentiment Analysis Model (v0.2.0)
     sentiment_model_id: str = "nlptown/bert-base-multilingual-uncased-sentiment"
+    
+    # Object Detection Model (v0.3.0)
+    vision_model_id: str = "facebook/detr-resnet-50"
+    vision_confidence_threshold: float = 0.85
+    
+    # Hardware and execution mode
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     hf_hub_offline: bool = False
 
