@@ -30,10 +30,8 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "Extracting notes for version: $VERSION"
           
-          # Use AWK to dynamically parse the CHANGELOG.md file.
-          # It finds the line starting with "## [$VERSION]" and prints everything 
-          # until it hits the next "## [" heading.
-          awk "/^## \\\[$VERSION\\]/{flag=1; next} /^## \\\[/{if(flag) exit} flag" CHANGELOG.md > release_notes.txt
+          # Use AWK with string matching (index) instead of brittle regex escaping
+          awk -v ver="$VERSION" '/^## \[/ { if (index($0, "["ver"]")) {flag=1; next} else if (flag) exit } flag' CHANGELOG.md > release_notes.txt
           
           # Fallback in case the changelog parsing fails or is empty
           if [ ! -s release_notes.txt ]; then
@@ -47,5 +45,4 @@ jobs:
           body_path: release_notes.txt
           draft: false
           prerelease: false
-          # If true, appends GitHub's auto-generated PR notes below our CHANGELOG extraction
           generate_release_notes: true
