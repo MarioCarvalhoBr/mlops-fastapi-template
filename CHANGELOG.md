@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-22
+
+### Added
+- **Domínio Comercial**: O projeto foi rebatizado como "Retail-AI", focado em soluções para E-commerce.
+- **Hugging Face Integration**: Implementação real do modelo `nlptown/bert-base-multilingual-uncased-sentiment` para análise de sentimento de avaliações.
+- **Hardware Acceleration**: Suporte automático para detecção e uso de GPU (CUDA) ou CPU via PyTorch.
+- **Offline Support**: Configuração para execução em modo offline via variáveis de ambiente.
+- **Frontend Dashboard**: Criação da pasta `frontend/` com interface reativa em Vue.js 3 e Tailwind CSS.
+- **Segurança e Validação**: Implementação de Pydantic Schemas rigorosos para validação de entrada (Security by Design) e limites de buffer de texto.
+- **CORS Middleware**: Habilitação de Cross-Origin Resource Sharing no FastAPI para permitir integração frontend/backend.
+- **Pipeline de CI**: Automação de testes e qualidade via GitHub Actions (`ci.yml`).
+
+## [0.1.1] - 2026-04-22
+### Added
+- Link to `CHANGELOG.md` in the README.
+### Changed
+- Refined template documentation and structure.
+
 ## [0.1.1] - 2026-04-22
 
 ### Added

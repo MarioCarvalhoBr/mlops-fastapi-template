@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mlops-fastapi-template"
-version = "0.1.1"
-description = "FastAPI for MLOps - PyImageSearch Tutorial"
+version = "0.2.0"
+description = "Retail-AI: Motor de Inteligência para E-commerce com FastAPI e Hugging Face"
 authors = ["Mário de Araújo Carvalho"]
 readme = "README.md"
 package-mode = false
