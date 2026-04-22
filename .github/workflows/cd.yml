@@ -1,0 +1,51 @@
+# .github/workflows/cd.yml
+name: MLOps CD Pipeline (Auto Release)
+
+on:
+  push:
+    # Trigger this workflow only when a tag matching the semantic versioning pattern is pushed
+    tags:
+      - 'v*.*.*'
+
+# Elevated permissions are required to create a release in the repository
+permissions:
+  contents: write
+
+jobs:
+  automated-release:
+    name: Generate GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history so the changelog parser can read everything correctly
+          fetch-depth: 0
+
+      - name: Parse Release Notes from CHANGELOG
+        id: extract_changelog
+        run: |
+          # Extract the version number without the 'v' prefix (e.g., v0.3.0 -> 0.3.0)
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "Extracting notes for version: $VERSION"
+          
+          # Use AWK to dynamically parse the CHANGELOG.md file.
+          # It finds the line starting with "## [$VERSION]" and prints everything 
+          # until it hits the next "## [" heading.
+          awk "/^## \\\[$VERSION\\]/{flag=1; next} /^## \\\[/{if(flag) exit} flag" CHANGELOG.md > release_notes.txt
+          
+          # Fallback in case the changelog parsing fails or is empty
+          if [ ! -s release_notes.txt ]; then
+            echo "No changelog entries found for $VERSION. Fallback to auto-generation." > release_notes.txt
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }} - Retail-AI
+          body_path: release_notes.txt
+          draft: false
+          prerelease: false
+          # If true, appends GitHub's auto-generated PR notes below our CHANGELOG extraction
+          generate_release_notes: true
