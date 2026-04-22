@@ -5,7 +5,7 @@ _sentiment_model = SentimentModel()
 
 def analyze_product_review(review_text: str) -> dict:
     if not review_text or not review_text.strip():
-        raise ValueError("Texto de entrada vazio.")
+        raise ValueError("Empty input text.")
 
     try:
         prediction = _sentiment_model.predict(review_text)
@@ -19,5 +19,5 @@ def analyze_product_review(review_text: str) -> dict:
             }
         }
     except Exception as e:
-        logger.error(f"Erro no serviço de sentimento: {str(e)}")
-        raise ValueError("Falha ao analisar sentimento da avaliação do produto.")
+        logger.error(f"Error in sentiment service: {str(e)}")
+        raise ValueError("Failed to analyze product review sentiment.")

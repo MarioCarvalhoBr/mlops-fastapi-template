@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,32 +15,32 @@
         </header>
 
         <main class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Motor de Análise de Avaliações</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Review Analytics Engine</h2>
             
             <form @submit.prevent="analyzeReview" class="space-y-5">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Comentário do Cliente:</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Customer Review:</label>
                     <textarea 
                         v-model="reviewText"
                         rows="5" 
                         class="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all resize-y"
-                        placeholder="Cole aqui o feedback do produto. Ex: A qualidade do material é excepcional, mas a entrega atrasou dois dias."></textarea>
+                        placeholder="Paste product feedback here. Ex: The material quality is exceptional, but the delivery was two days late."></textarea>
                 </div>
                 
                 <button 
                     type="submit" 
                     :disabled="isLoading || reviewText.length < 3"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
-                    {{ isLoading ? 'Processando Inferência...' : 'Executar Análise de Sentimento' }}
+                    {{ isLoading ? 'Processing Inference...' : 'Run Sentiment Analysis' }}
                 </button>
             </form>
 
             <div v-if="result" class="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50 shadow-inner transition-all">
-                <h3 class="font-extrabold text-xl mb-4 text-gray-800 border-b pb-2">Diagnóstico da Inteligência Artificial</h3>
+                <h3 class="font-extrabold text-xl mb-4 text-gray-800 border-b pb-2">AI Diagnosis</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-white p-4 rounded shadow-sm border">
-                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Sentimento Extraído</p>
+                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Extracted Sentiment</p>
                         <p class="text-2xl font-black uppercase"
                            :class="{'text-emerald-600': result.primary_sentiment === 'positive', 'text-rose-600': result.primary_sentiment === 'negative', 'text-amber-500': result.primary_sentiment === 'neutral'}">
                             {{ result.primary_sentiment }}
@@ -48,7 +48,7 @@
                     </div>
                     
                     <div class="bg-white p-4 rounded shadow-sm border">
-                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Confiança do Modelo (Score)</p>
+                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Model Confidence (Score)</p>
                         <p class="text-2xl font-black text-gray-700">
                             {{ (result.confidence * 100).toFixed(2) }}%
                         </p>
@@ -56,13 +56,13 @@
                 </div>
 
                 <div class="mt-6 bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono shadow-md">
-                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Metadados Técnicos de Execução</p>
+                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Technical Execution Metadata</p>
                     <pre>{{ JSON.stringify(result.metadata, null, 2) }}</pre>
                 </div>
             </div>
 
             <div v-if="error" class="mt-6 p-4 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-medium shadow-sm">
-                <span class="font-bold">Erro de Processamento:</span> {{ error }}
+                <span class="font-bold">Processing Error:</span> {{ error }}
             </div>
         </main>
     </div>
@@ -93,7 +93,7 @@
 
                         if (!response.ok) {
                             const errData = await response.json()
-                            throw new Error(errData.detail || 'Erro na comunicação com a API de ML')
+                            throw new Error(errData.detail || 'Error communicating with ML API')
                         }
 
                         result.value = await response.json()

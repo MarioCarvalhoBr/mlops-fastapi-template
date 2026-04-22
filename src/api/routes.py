@@ -23,4 +23,4 @@ async def analyze_review_route(request: ReviewRequest):
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception:
-        raise HTTPException(status_code=500, detail="Erro interno na inferência.")
+        raise HTTPException(status_code=500, detail="Internal inference error.")

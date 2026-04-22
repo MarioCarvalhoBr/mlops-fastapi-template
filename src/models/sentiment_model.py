@@ -13,7 +13,7 @@ class SentimentModel:
         if settings.hf_hub_offline:
             os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
-        logger.info(f"Carregando {self.model_name} em {settings.device}")
+        logger.info(f"Loading {self.model_name} on {settings.device}")
         
         self.classifier = pipeline(
             "sentiment-analysis",
@@ -25,7 +25,7 @@ class SentimentModel:
         result = self.classifier(text)[0]
         label_str = result.get('label', '')
         
-        # Mapeamento para domínio de negócio
+        # Mapping to business domain
         mapping = {
             "1 star": "negative", "2 stars": "negative",
             "3 stars": "neutral",
