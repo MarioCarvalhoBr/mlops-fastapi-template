@@ -10,8 +10,8 @@ settings = load_config()
 
 app = FastAPI(
     title="Retail-AI MLOps API",
-    version="0.3.0",
-    description="High-performance API for open-source AI models (E-commerce)",
+    version="0.4.0",
+    description="High-performance serving engine for E-commerce AI models.",
 )
 
 app.add_middleware(

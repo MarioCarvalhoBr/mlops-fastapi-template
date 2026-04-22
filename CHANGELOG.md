@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-04-22
+
+### Added
+- **Retrieval Service (Semantic Search)**: Integrated the `sentence-transformers/all-MiniLM-L6-v2` model natively via Hugging Face Transformers pipeline for generating dense vector embeddings.
+- **In-Memory Vector Database**: Implemented an in-memory product catalog with cosine similarity matching using PyTorch (`torch.nn.functional.cosine_similarity`).
+- **Semantic Search Endpoint**: Added the `/semantic-search` endpoint mapping user intent to product features, bypassing strict lexical search limitations.
+- **Frontend Dashboard Update**: Introduced the "Semantic Search" tab in the Vue.js interface to test intent-based queries directly against the live catalog.
+
 ## [0.3.0] - 2026-04-22
 
 ### Added
@@ -55,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.4.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.4.0
 [0.3.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.3.0
 [0.2.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.2.0
 [0.1.1]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.1.1

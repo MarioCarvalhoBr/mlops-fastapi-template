@@ -12,7 +12,7 @@
         <header class="mb-8 border-b border-gray-300 pb-4 flex justify-between items-end gap-4 flex-wrap">
             <div>
                 <h1 class="text-4xl font-extrabold text-indigo-900 tracking-tight">Retail-AI</h1>
-                <p class="text-gray-600 mt-1 font-medium">v0.3.0 - MLOps Intelligence Engine</p>
+                <p class="text-gray-600 mt-1 font-medium">v0.4.0 - Intelligence Engine Dashboard</p>
             </div>
             <div class="flex space-x-3">
                 <button @click="activeTab = 'sentiment'" :class="activeTab === 'sentiment' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-5 py-2.5 rounded-lg font-bold transition-colors shadow-sm">
@@ -20,6 +20,9 @@
                 </button>
                 <button @click="activeTab = 'vision'" :class="activeTab === 'vision' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-5 py-2.5 rounded-lg font-bold transition-colors shadow-sm">
                     Visual Detection
+                </button>
+                <button @click="activeTab = 'search'" :class="activeTab === 'search' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-5 py-2.5 rounded-lg font-bold transition-colors shadow-sm">
+                    Semantic Search
                 </button>
             </div>
         </header>
@@ -126,6 +129,52 @@
                 <span class="font-bold">Error:</span> {{ visionError }}
             </div>
         </main>
+
+        <main v-show="activeTab === 'search'" class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-l-4 border-indigo-500 pl-3">Semantic Product Search</h2>
+            <form @submit.prevent="executeSearch" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Search Intent:</label>
+                    <input 
+                        type="text"
+                        v-model="searchQuery"
+                        class="w-full border border-gray-300 rounded-lg p-4 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-lg"
+                        placeholder="e.g. 'I need something to stop back pain' or 'good for listening to music on planes'" />
+                </div>
+                <button 
+                    type="submit" 
+                    :disabled="isSearchLoading || searchQuery.length < 2"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
+                    {{ isSearchLoading ? 'Computing Vector Space...' : 'Search Catalog' }}
+                </button>
+            </form>
+
+            <div v-if="searchResult" class="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50 shadow-inner">
+                <h3 class="font-extrabold text-xl mb-4 text-gray-800 border-b pb-2">Top Recommended Products</h3>
+                
+                <div class="space-y-4">
+                    <div v-for="(product, index) in searchResult.results" :key="index" class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between">
+                        <div class="flex-1">
+                            <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">{{ product.category }}</span>
+                            <h4 class="text-lg font-black text-gray-900 mt-1">{{ product.name }}</h4>
+                            <p class="text-sm text-gray-600 mt-2">{{ product.description }}</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 md:ml-6 flex flex-col items-start md:items-end">
+                            <span class="text-xs text-gray-500 font-bold uppercase">Similarity Score</span>
+                            <span class="text-2xl font-black text-emerald-600">{{ (product.similarity_score * 100).toFixed(1) }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono shadow-md">
+                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Retrieval Technical Metadata</p>
+                    <pre>{{ JSON.stringify(searchResult.metadata, null, 2) }}</pre>
+                </div>
+            </div>
+            <div v-if="searchError" class="mt-6 p-4 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-medium shadow-sm">
+                <span class="font-bold">Error:</span> {{ searchError }}
+            </div>
+        </main>
     </div>
 
     <script>
@@ -133,35 +182,34 @@
 
         createApp({
             setup() {
-                // Application active tab state
                 const activeTab = ref('sentiment')
                 
-                // Sentiment Analysis State
                 const reviewText = ref('')
                 const sentimentResult = ref(null)
                 const sentimentError = ref(null)
                 const isSentimentLoading = ref(false)
 
-                // Object Detection State
                 const selectedFile = ref(null)
-                const imagePreviewUrl = ref(null) // Stores the URL of the uploaded image
+                const imagePreviewUrl = ref(null) 
                 const visionResult = ref(null)
                 const visionError = ref(null)
                 const isVisionLoading = ref(false)
 
-                // Clean-up Code Sentiment module
+                const searchQuery = ref('')
+                const searchResult = ref(null)
+                const searchError = ref(null)
+                const isSearchLoading = ref(false)
+
                 const analyzeReview = async () => {
                     isSentimentLoading.value = true
                     sentimentError.value = null
                     sentimentResult.value = null
-
                     try {
                         const response = await fetch('http://localhost:8000/analyze-review', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ text: reviewText.value })
                         })
-
                         if (!response.ok) {
                             const errData = await response.json()
                             throw new Error(errData.detail || 'API execution error.')
@@ -174,16 +222,12 @@
                     }
                 }
 
-                // Handle file selection and prepare preview URL
                 const handleFileUpload = (event) => {
                     const file = event.target.files[0]
                     if (file) {
                         selectedFile.value = file
-                        // Create a temporary object URL for local rendering
                         imagePreviewUrl.value = URL.createObjectURL(file) 
                         visionResult.value = null
-                        
-                        // Clear previous canvas drawing if a new file is uploaded
                         nextTick(() => {
                             const canvas = document.getElementById('detectionCanvas');
                             if (canvas) {
@@ -194,86 +238,58 @@
                     }
                 }
 
-                // Helper function: Draws bounding boxes and labels on HTML5 Canvas
                 const drawBoundingBoxes = (objects, imageSrc) => {
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.getElementById('detectionCanvas');
                         const ctx = canvas.getContext('2d');
-                        
-                        // Set canvas dimensions to match intrinsic image size
                         canvas.width = img.width;
                         canvas.height = img.height;
-                        
-                        // 1. Draw the base original image
                         ctx.drawImage(img, 0, 0);
-
-                        // Define drawing styles (bold lines, large text for native resolution)
                         ctx.lineWidth = 6;
-                        ctx.strokeStyle = '#4f46e5'; // Indigo color
+                        ctx.strokeStyle = '#4f46e5'; 
                         ctx.fillStyle = '#4f46e5'; 
                         ctx.font = 'bold 36px sans-serif';
                         ctx.textBaseline = 'top';
-
-                        // 2. Iterate through detected objects
                         objects.forEach(obj => {
                             const { xmin, ymin, xmax, ymax } = obj.bounding_box;
                             const width = xmax - xmin;
                             const height = ymax - ymin;
-
-                            // Draw the bounding box rectangle
                             ctx.strokeRect(xmin, ymin, width, height);
-
-                            // Prepare label text (Label + % Confidence)
                             const labelText = `${obj.label} ${(obj.confidence * 100).toFixed(0)}%`;
                             const textWidth = ctx.measureText(labelText).width;
-                            const textHeight = 42; // Font size + padding
-
-                            // Draw label background rectangle
+                            const textHeight = 42; 
                             ctx.fillRect(xmin, ymin - textHeight, textWidth + 10, textHeight);
-
-                            // Draw label text in white
                             ctx.fillStyle = 'white';
                             ctx.fillText(labelText, xmin + 5, ymin - textHeight + 2);
-                            
-                            // Restore fillStyle for the next box style loop
                             ctx.fillStyle = '#4f46e5'; 
                         });
                     };
                     img.src = imageSrc;
                 };
 
-                // Object Detection Core module
                 const detectObjects = async () => {
                     isVisionLoading.value = true
                     visionError.value = null
                     visionResult.value = null
-
                     const formData = new FormData()
                     formData.append('file', selectedFile.value)
-
                     try {
                         const response = await fetch('http://localhost:8000/detect-objects', {
                             method: 'POST',
                             body: formData
                         })
-
                         if (!response.ok) {
                             const errData = await response.json()
                             throw new Error(errData.detail || 'API execution error.')
                         }
-                        
                         const result = await response.json()
                         visionResult.value = result
-
-                        // Clean Code Principle: DOM manipulation must happen after Vue update
-                        // nextTick ensures the canvas element is visible in the DOM
                         if (result.object_count > 0 && imagePreviewUrl.value) {
                             nextTick(() => {
                                 drawBoundingBoxes(result.detected_objects, imagePreviewUrl.value);
                             });
                         }
-
                     } catch (err) {
                         visionError.value = err.message
                     } finally {
@@ -281,10 +297,33 @@
                     }
                 }
 
+                const executeSearch = async () => {
+                    isSearchLoading.value = true
+                    searchError.value = null
+                    searchResult.value = null
+                    try {
+                        const response = await fetch('http://localhost:8000/semantic-search', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ query: searchQuery.value, top_k: 3 })
+                        })
+                        if (!response.ok) {
+                            const errData = await response.json()
+                            throw new Error(errData.detail || 'API execution error.')
+                        }
+                        searchResult.value = await response.json()
+                    } catch (err) {
+                        searchError.value = err.message
+                    } finally {
+                        isSearchLoading.value = false
+                    }
+                }
+
                 return { 
                     activeTab, 
                     reviewText, sentimentResult, sentimentError, isSentimentLoading, analyzeReview,
-                    selectedFile, visionResult, visionError, isVisionLoading, handleFileUpload, detectObjects
+                    selectedFile, visionResult, visionError, isVisionLoading, handleFileUpload, detectObjects,
+                    searchQuery, searchResult, searchError, isSearchLoading, executeSearch
                 }
             }
         }).mount('#app')
