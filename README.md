@@ -11,6 +11,7 @@ This repository provides a production-grade template for serving Machine Learnin
 - [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-mlops-fastapi-template)
   - [📋 Table of Contents](#-table-of-contents)
   - [🌟 Overview](#-overview)
+  - [📸 Dashboard Preview](#-dashboard-preview)
   - [🗺️ Project Roadmap](#️-project-roadmap)
   - [🛠 Technologies Used](#-technologies-used)
   - [📂 Project Structure](#-project-structure)
@@ -20,20 +21,33 @@ This repository provides a production-grade template for serving Machine Learnin
   - [🚀 Usage and Execution](#-usage-and-execution)
     - [Starting the Backend](#starting-the-backend)
     - [Running the Frontend Dashboard](#running-the-frontend-dashboard)
+  - [🛒 Managing the Product Catalog (Multimodal Search)](#-managing-the-product-catalog-multimodal-search)
+    - [Directory Structure](#directory-structure)
+    - [How to Add a New Product](#how-to-add-a-new-product)
   - [🧪 Code Quality and Tests](#-code-quality-and-tests)
-    - [Execute Automated Tests](#execute-automated-tests)
-    - [Linting and Formatting](#linting-and-formatting)
   - [📈 Load Testing](#-load-testing)
   - [📄 License](#-license)
   - [👥 Authors](#-authors)
-  - [🔗 Useful Links](#-useful-links)
-  - [Credits and References](#credits-and-references)
 
 ---
 
 ## 🌟 Overview
 
-Unlike isolated research scripts, this project implements a robust **Service Layer** that isolates the inference logic from the web framework. The architecture follows the `src/` layout, ensuring the source code is testable, modular, and ready for horizontal scalability in cloud environments or containers. It seamlessly integrates open-source Hugging Face models for NLP (Sentiment Analysis) and Computer Vision (Object Detection) directly into a reactive web dashboard.
+Unlike isolated research scripts, this project implements a robust **Service Layer** that isolates the inference logic from the web framework. The architecture follows the `src/` layout, ensuring the source code is testable, modular, and ready for horizontal scalability in cloud environments or containers. It seamlessly integrates open-source Hugging Face models for NLP (Sentiment Analysis), Computer Vision (Object Detection), and Zero-Shot Multimodal Retrieval directly into a reactive web dashboard.
+
+---
+
+## 📸 Dashboard Preview
+
+Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the placeholder image paths with your actual screenshot files).*
+
+<div align="center">
+  <img src="https://via.placeholder.com/600x400.png?text=Sentiment+Analysis" width="48%" alt="Sentiment Analysis Tab">
+  <img src="https://via.placeholder.com/600x400.png?text=Visual+Detection" width="48%" alt="Visual Detection Tab">
+  <br>
+  <img src="https://via.placeholder.com/600x400.png?text=Semantic+Search" width="48%" alt="Semantic Search Tab">
+  <img src="https://via.placeholder.com/600x400.png?text=Multimodal+Search" width="48%" alt="Multimodal Search Tab">
+</div>
 
 ---
 
@@ -42,7 +56,8 @@ Unlike isolated research scripts, this project implements a robust **Service Lay
 - [x] **v0.1.0 - Foundation:** FastAPI setup, Clean Architecture, Pydantic V2 validation, Pytest, Locust load testing, and basic CI/CD.
 - [x] **v0.2.0 - Retail-AI Sentiment:** Integration with Hugging Face (`nlptown/bert-base-multilingual-uncased-sentiment`), offline mode caching, GPU hardware acceleration, and initial Vue.js Frontend.
 - [x] **v0.3.0 - Vision Service:** Object detection using `facebook/detr-resnet-50`, multipart image uploads, and interactive bounding box rendering using HTML5 `<canvas>`.
-- [ ] **v0.4.0 - Retrieval Service:** Semantic Search and Recommendation System using Sentence Embeddings and Vector Search databases.
+- [x] **v0.4.0 - Retrieval Service:** Semantic Search System using Sentence Embeddings (`sentence-transformers/all-MiniLM-L6-v2`) and in-memory cosine similarity matching.
+- [x] **v0.5.0 - Multimodal Search:** True zero-shot cross-modal retrieval mapping text and images to a joint vector space using CLIP (`openai/clip-vit-base-patch32`), backed by a physical file-based product catalog.
 
 ---
 
@@ -51,12 +66,11 @@ Unlike isolated research scripts, this project implements a robust **Service Lay
 The project integrates the most modern tools of the Python and Web ecosystem for MLOps:
 
 * **[FastAPI](https://fastapi.tiangolo.com/):** High-performance web framework for building APIs.
-* **[Hugging Face Transformers](https://huggingface.co/docs/transformers/index):** State-of-the-art open-source models for NLP and Computer Vision.
+* **[Hugging Face Transformers](https://huggingface.co/docs/transformers/index):** State-of-the-art open-source models for NLP, CV, and Multimodal tasks.
 * **[Vue.js 3](https://vuejs.org/) & [Tailwind CSS](https://tailwindcss.com/):** Reactive frontend dashboard for real-time AI interaction via CDN.
 * **[Pydantic V2](https://docs.pydantic.dev/):** Data validation and configuration management via environment variables (Security by Design).
 * **[Poetry](https://python-poetry.org/):** Dependency management and deterministic virtual environments.
 * **[Pytest](https://docs.pytest.org/) & [Locust](https://locust.io/):** Unit/integration testing suite and latency/RPS load testing.
-* **[MyPy](http://mypy-lang.org/), [Black](https://github.com/psf/black) & [isort](https://pycqa.github.io/isort/):** Static type checking and automatic code formatting.
 
 ---
 
@@ -66,6 +80,8 @@ The organization follows the principle of separation of concerns:
 
 ```text
 mlops-fastapi-template/
+├── data/
+│   └── catalog/                # Physical database for the Multimodal Search
 ├── frontend/                   # Vue.js 3 + Tailwind CSS Dashboard
 │   └── index.html              # Reactive UI for API interaction
 ├── src/                        # Application source code
@@ -77,10 +93,7 @@ mlops-fastapi-template/
 │   ├── utils/                  # Helper functions
 │   └── main.py                 # Application entry point
 ├── tests/                      # Automated test suite
-│   ├── unit/                   # Isolated function tests
-│   ├── integration/            # Endpoints and system integration tests
-│   └── performance/            # Load testing scripts (Locust)
-├── .github/workflows/          # GitHub Actions CI/CD pipelines
+├── .github/workflows/          # GitHub Actions CI/CD pipelines (Auto Releases)
 ├── configs/                    # YAML configuration files
 ├── Makefile                    # Automation of common tasks
 ├── pyproject.toml              # Project dependencies and metadata
@@ -111,7 +124,7 @@ mlops-fastapi-template/
     ```
 
 3.  **Environment Variables:**
-    Make sure to configure your `.env` file (created automatically from `.env.example`). You can toggle the `HF_HUB_OFFLINE=1` flag if models are already cached.
+    Configure your `.env` file (created automatically from `.env.example`). Toggle `HF_HUB_OFFLINE=1` to enforce offline execution if the AI models are already cached in your environment.
 
 ---
 
@@ -124,16 +137,53 @@ To start the FastAPI development server with *hot-reload*:
 poetry run uvicorn src.main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`. Access the interactive Swagger UI documentation at:
-* **Docs:** `http://localhost:8000/docs`
+The API will be available at `http://localhost:8000`. Access the interactive Swagger UI documentation at `http://localhost:8000/docs`.
 
 ### Running the Frontend Dashboard
 The frontend is built as a lightweight, reactive Single Page Application (SPA). No Node.js or npm installation is required!
 
 1. Ensure the FastAPI backend is running and healthy.
-2. Simply open the `frontend/index.html` file in your favorite web browser.
-   * *Tip: You can double-click the file in your file explorer, use a Live Server extension in VS Code, or run a simple Python HTTP server: `python -m http.server 5500 -d frontend/`*
-3. Navigate between the **Sentiment Analysis** and **Visual Detection** tabs to interact with the AI models in real-time.
+2. Open the `frontend/index.html` file in your favorite web browser.
+3. Navigate between the tabs to interact with the AI models in real-time.
+
+---
+
+## 🛒 Managing the Product Catalog (Multimodal Search)
+
+Starting from **v0.5.0**, the system uses a physical directory structure to load products and compute joint vector embeddings via the CLIP model.
+
+### Directory Structure
+The catalog must be located at `data/catalog/`. Each product requires its own unique folder containing an `info.json` metadata file and an `images/` subfolder.
+
+```text
+data/
+└── catalog/
+    ├── P001/
+    │   ├── info.json
+    │   └── images/
+    │       ├── front_view.jpg
+    │       └── side_view.png
+    ├── P002/
+    │   ├── info.json
+    │   └── images/
+    │       └── product_shot.webp
+```
+
+### How to Add a New Product
+To seamlessly add a new product to the AI engine:
+
+1. **Create a Folder:** Navigate to `data/catalog/` and create a new directory with a unique Product ID (e.g., `P003`).
+2. **Add Metadata:** Inside the new folder, create a file named `info.json` following this exact structure:
+   ```json
+   {
+       "id": "P003",
+       "name": "Leather Messenger Bag",
+       "category": "Accessories",
+       "description": "Handcrafted genuine leather messenger bag with laptop compartment."
+   }
+   ```
+3. **Add Images:** Create a subfolder named `images/` inside your product directory. Drop as many product pictures as you want inside it. Supported modern formats include: `.jpg`, `.jpeg`, `.png`, `.webp`, and `.avif`.
+4. **Restart the API:** The engine automatically scans the `data/catalog` folder upon startup, calculates the multimodal embeddings for texts and images, and loads them into the active tensor memory.
 
 ---
 
@@ -141,17 +191,10 @@ The frontend is built as a lightweight, reactive Single Page Application (SPA). 
 
 The project uses a `Makefile` to standardize development commands.
 
-### Execute Automated Tests
 ```bash
 make test        # Runs all tests (Unit + Integration)
-make test-unit   # Runs only unit tests
-```
-
-### Linting and Formatting
-```bash
 make format      # Applies Black and isort
 make lint        # Checks compliance with flake8
-make type-check  # Runs MyPy for static type verification
 ```
 
 ---
@@ -161,32 +204,15 @@ make type-check  # Runs MyPy for static type verification
 To validate how the API behaves under concurrent pressure:
 
 1. Ensure the backend API is running in one terminal.
-2. In another terminal, execute:
-    ```bash
-    make load-test
-    ```
+2. In another terminal, execute: `make load-test`
 3. Access `http://localhost:8089` to configure the number of simulated users and observe real-time latency graphs.
 
 ---
 
 ## 📄 License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## 👥 Authors
 - **Mário de Araújo Carvalho** - *Contributor and Developer* - [GitHub](https://github.com/MarioCarvalhoBr)
-
-## 🔗 Useful Links
-
-- **Documentation**: [Docs](https://github.com/AdaptaBrasil/mlops-fastapi-template/tree/main/docs)
-- **Issues**: [Bug Tracker](https://github.com/AdaptaBrasil/mlops-fastapi-template/issues)
-- **Changelog**: [Version History](https://github.com/AdaptaBrasil/mlops-fastapi-template/blob/main/CHANGELOG.md)
-- **Code of Conduct**: [Code of Conduct](https://github.com/AdaptaBrasil/mlops-fastapi-template/blob/main/CODE_OF_CONDUCT.md)
-
-## Credits and References
-
-> "This project was structured and developed based on the educational Software Engineering for MLOps series from PyImageSearch. The base architecture, service isolation, and API construction best practices were implemented following the tutorial [FastAPI for MLOps: Python Project Structure and API Best Practices](https://pyimagesearch.com/2026/04/13/fastapi-for-mlops-python-project-structure-and-api-best-practices/). In turn, the entire validation pipeline — including unit tests, integration tests with Pytest, code quality tools, and dynamic load testing with Locust — was guided by the [Pytest Tutorial: MLOps Testing, Fixtures, and Locust Load Testing](https://pyimagesearch.com/2026/04/20/pytest-tutorial-mlops-testing-fixtures-and-locust-load-testing/). Combining the practices taught in these two articles enabled the creation of a robust *template* that reflects the highest industry standards for deploying Machine Learning models."
-
-**Developed by [Mário de Araújo Carvalho](https://github.com/MarioCarvalhoBr)**
