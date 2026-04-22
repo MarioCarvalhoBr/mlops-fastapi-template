@@ -12,6 +12,7 @@ This repository provides a production-grade template for serving Machine Learnin
   - [📋 Table of Contents](#-table-of-contents)
   - [🌟 Overview](#-overview)
   - [📸 Dashboard Preview](#-dashboard-preview)
+    - [To see the full set of screenshots and detailed explanations of each dashboard feature, please refer to the SCREENSHOTS.md file in the repository.](#to-see-the-full-set-of-screenshots-and-detailed-explanations-of-each-dashboard-feature-please-refer-to-the-screenshotsmd-file-in-the-repository)
   - [🗺️ Project Roadmap](#️-project-roadmap)
   - [🛠 Technologies Used](#-technologies-used)
   - [📂 Project Structure](#-project-structure)
@@ -42,12 +43,14 @@ Unlike isolated research scripts, this project implements a robust **Service Lay
 Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the placeholder image paths with your actual screenshot files).*
 
 <div align="center">
-  <img src="https://via.placeholder.com/600x400.png?text=Sentiment+Analysis" width="48%" alt="Sentiment Analysis Tab">
-  <img src="https://via.placeholder.com/600x400.png?text=Visual+Detection" width="48%" alt="Visual Detection Tab">
+  <img src="screenshots/01_Sentiment_Analysis/image_1.png" width="48%" alt="Sentiment Analysis Tab">
+  <img src="screenshots/03_Visual_Detection/image_1.png" width="48%" alt="Visual Detection Tab">
   <br>
-  <img src="https://via.placeholder.com/600x400.png?text=Semantic+Search" width="48%" alt="Semantic Search Tab">
-  <img src="https://via.placeholder.com/600x400.png?text=Multimodal+Search" width="48%" alt="Multimodal Search Tab">
+  <img src="screenshots/02_Semantic_Search/image_1.png" width="48%" alt="Semantic Search Tab">
+  <img src="screenshots/04_Multimodal_Search/image_1.png" width="48%" alt="Multimodal Search Tab">
 </div>
+
+### To see the full set of screenshots and detailed explanations of each dashboard feature, please refer to the [SCREENSHOTS.md](SCREENSHOTS.md) file in the repository.
 
 ---
 
