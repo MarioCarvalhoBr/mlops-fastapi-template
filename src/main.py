@@ -1,10 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from src.api.routes import router
 from src.config.config import load_config
 from src.core.logger import logger
+
 
 settings = load_config()
 
@@ -23,6 +25,8 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 if __name__ == "__main__":
     logger.info(f"Starting server on {settings.api_host}:{settings.api_port}")

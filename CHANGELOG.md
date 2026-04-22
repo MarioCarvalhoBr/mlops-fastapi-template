@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-04-22
+
+### Added
+- **Containerization (Docker)**: Implemented production-ready `Dockerfile` based on `python:3.12-slim`, utilizing Docker Layer Caching for Poetry dependencies.
+- **Service Orchestration**: Added `docker-compose.yml` with dedicated volume management for the file-based catalog (`/app/data/catalog`) and Hugging Face weights cache (`/app/cache/huggingface`) to prevent redundant gigabyte downloads on container restart.
+- **Ignore Profiles**: Established `.dockerignore` to secure image builds and reduce image bloat by excluding local virtual environments and test artifacts.
+  
 ## [0.6.0] - 2026-04-22
 
 ### Added
@@ -83,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.7.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.7.0
 [0.6.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.6.0
 [0.5.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.5.0
 [0.4.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.4.0

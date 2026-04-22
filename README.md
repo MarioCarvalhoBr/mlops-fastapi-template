@@ -24,7 +24,9 @@ This repository provides a production-grade template for serving Machine Learnin
     - [Prerequisites](#prerequisites)
     - [Step by Step](#step-by-step)
   - [🚀 Usage and Execution](#-usage-and-execution)
-    - [Starting the Backend](#starting-the-backend)
+    - [Starting the Backend - Dockerized:](#starting-the-backend---dockerized)
+    - [Running via Docker (Production Recommended)](#running-via-docker-production-recommended)
+    - [Starting the Backend - Manually:](#starting-the-backend---manually)
     - [Running the Frontend Dashboard](#running-the-frontend-dashboard)
   - [🛒 Managing the Product Catalog (Multimodal Search)](#-managing-the-product-catalog-multimodal-search)
     - [Directory Structure](#directory-structure)
@@ -136,8 +138,26 @@ mlops-fastapi-template/
 ---
 
 ## 🚀 Usage and Execution
+### Starting the Backend - Dockerized:
+### Running via Docker (Production Recommended)
+The entire AI engine can be containerized and run with a single command. The Docker configuration automatically persists your product catalog and caches the heavy Hugging Face models so they are downloaded only once.
 
-### Starting the Backend
+1. Build and start the container in detached mode:
+   ```bash
+   docker-compose up -d --build
+   ```
+2. Monitor the logs to ensure models are downloading/loading correctly:
+   ```bash
+   docker-compose logs -f
+   ```
+3. To stop the engine:
+   ```bash
+   docker-compose down
+   ```
+*Note: The frontend can still be accessed by opening `frontend/index.html` locally, as it communicates directly with `localhost:8000` exposed by the container.*
+
+
+### Starting the Backend - Manually:
 To start the FastAPI development server with *hot-reload*:
 
 ```bash

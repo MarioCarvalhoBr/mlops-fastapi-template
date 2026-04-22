@@ -20,6 +20,7 @@ torchvision = ">=0.17.0"
 pillow = "^10.2.0"
 python-multipart = "^0.0.9"
 timm = "^0.9.16"
+aiofiles = "^25.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
