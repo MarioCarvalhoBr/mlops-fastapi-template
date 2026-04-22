@@ -5,23 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-04-22
+
+### Added
+- **Vision Service (Object Detection)**: Integrated the `facebook/detr-resnet-50` model via Hugging Face pipeline for identifying products in images.
+- **Image Upload Endpoint**: Added the `/detect-objects` endpoint in FastAPI supporting `multipart/form-data` for image processing.
+- **Dynamic Bounding Boxes (Frontend)**: Enhanced the Vue.js dashboard with a new "Visual Detection" tab that renders bounding boxes, labels, and confidence scores directly over images using HTML5 `<canvas>`.
+- **Dependency Management**: Added `pillow`, `python-multipart`, `timm`, and strictly pinned `torchvision>=0.17.0` to resolve PyTorch ABI compatibility issues with Python 3.12.
+- **English Standardization**: Refactored the entire codebase, including UI, logs, and docstrings, strictly to English, adhering to global software engineering standards.
+
 ## [0.2.0] - 2026-04-22
 
 ### Added
-- **Domínio Comercial**: O projeto foi rebatizado como "Retail-AI", focado em soluções para E-commerce.
-- **Hugging Face Integration**: Implementação real do modelo `nlptown/bert-base-multilingual-uncased-sentiment` para análise de sentimento de avaliações.
-- **Hardware Acceleration**: Suporte automático para detecção e uso de GPU (CUDA) ou CPU via PyTorch.
-- **Offline Support**: Configuração para execução em modo offline via variáveis de ambiente.
-- **Frontend Dashboard**: Criação da pasta `frontend/` com interface reativa em Vue.js 3 e Tailwind CSS.
-- **Segurança e Validação**: Implementação de Pydantic Schemas rigorosos para validação de entrada (Security by Design) e limites de buffer de texto.
-- **CORS Middleware**: Habilitação de Cross-Origin Resource Sharing no FastAPI para permitir integração frontend/backend.
-- **Pipeline de CI**: Automação de testes e qualidade via GitHub Actions (`ci.yml`).
-
-## [0.1.1] - 2026-04-22
-### Added
-- Link to `CHANGELOG.md` in the README.
-### Changed
-- Refined template documentation and structure.
+- **Commercial Domain**: Project rebranded as "Retail-AI", focusing on E-commerce solutions.
+- **Hugging Face Integration**: Real implementation of the `nlptown/bert-base-multilingual-uncased-sentiment` model for product review sentiment analysis.
+- **Hardware Acceleration**: Automatic support for GPU (CUDA) or CPU detection via PyTorch.
+- **Offline Support**: Configuration for offline execution via environment variables (`hf_hub_offline`).
+- **Frontend Dashboard**: Created the `frontend/` directory with a reactive UI using Vue.js 3 and Tailwind CSS.
+- **Security and Validation**: Implemented strict Pydantic Schemas for input validation (Security by Design) and text buffer limits.
+- **CORS Middleware**: Enabled Cross-Origin Resource Sharing in FastAPI to allow frontend/backend integration.
+- **CI Pipeline**: Automated testing and code quality checks via GitHub Actions (`ci.yml`).
 
 ## [0.1.1] - 2026-04-22
 
@@ -52,5 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.3.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.3.0
+[0.2.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.2.0
 [0.1.1]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.1.1
 [0.1.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.1.0
