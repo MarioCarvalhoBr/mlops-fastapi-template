@@ -7,7 +7,6 @@ from src.api.routes import router
 from src.config.config import load_config
 from src.core.logger import logger
 
-
 settings = load_config()
 
 app = FastAPI(
