@@ -144,7 +144,11 @@ The entire AI engine can be containerized and run with a single command. The Doc
 
 1. Build and start the container in detached mode:
    ```bash
+   # First time setup (builds the image and starts the container)
    docker-compose up -d --build
+
+   # Subsequent runs (faster startup since the image is already built and models are cached)
+   docker-compose up -d
    ```
 2. Monitor the logs to ensure models are downloading/loading correctly:
    ```bash
