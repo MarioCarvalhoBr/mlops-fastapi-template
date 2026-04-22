@@ -9,59 +9,59 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen p-8">
     <div id="app" class="max-w-5xl mx-auto">
-        <header class="mb-8 border-b border-gray-300 pb-4 flex justify-between items-end">
+        <header class="mb-8 border-b border-gray-300 pb-4 flex justify-between items-end gap-4 flex-wrap">
             <div>
                 <h1 class="text-4xl font-extrabold text-indigo-900 tracking-tight">Retail-AI</h1>
-                <p class="text-gray-600 mt-1 font-medium">v0.3.0 - Intelligence Engine Dashboard</p>
+                <p class="text-gray-600 mt-1 font-medium">v0.3.0 - MLOps Intelligence Engine</p>
             </div>
-            <div class="flex space-x-4">
-                <button @click="activeTab = 'sentiment'" :class="activeTab === 'sentiment' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-4 py-2 rounded-lg font-bold transition-colors shadow-sm">
+            <div class="flex space-x-3">
+                <button @click="activeTab = 'sentiment'" :class="activeTab === 'sentiment' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-5 py-2.5 rounded-lg font-bold transition-colors shadow-sm">
                     Sentiment Analysis
                 </button>
-                <button @click="activeTab = 'vision'" :class="activeTab === 'vision' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-4 py-2 rounded-lg font-bold transition-colors shadow-sm">
+                <button @click="activeTab = 'vision'" :class="activeTab === 'vision' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-600'" class="px-5 py-2.5 rounded-lg font-bold transition-colors shadow-sm">
                     Visual Detection
                 </button>
             </div>
         </header>
 
         <main v-show="activeTab === 'sentiment'" class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Customer Review Analysis</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-l-4 border-indigo-500 pl-3">Customer Review Analysis</h2>
             <form @submit.prevent="analyzeReview" class="space-y-5">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Review Text:</label>
                     <textarea 
                         v-model="reviewText"
                         rows="4" 
-                        class="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all resize-y"
-                        placeholder="Paste the product feedback here..."></textarea>
+                        class="w-full border border-gray-300 rounded-lg p-4 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all resize-y text-lg"
+                        placeholder="Paste product feedback here..."></textarea>
                 </div>
                 <button 
                     type="submit" 
                     :disabled="isSentimentLoading || reviewText.length < 3"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
-                    {{ isSentimentLoading ? 'Processing Inference...' : 'Execute Sentiment Analysis' }}
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
+                    {{ isSentimentLoading ? 'Processing...' : 'Run Analysis' }}
                 </button>
             </form>
 
             <div v-if="sentimentResult" class="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50 shadow-inner">
                 <h3 class="font-extrabold text-xl mb-4 text-gray-800 border-b pb-2">AI Diagnostics</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded shadow-sm border">
-                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Extracted Sentiment</p>
-                        <p class="text-2xl font-black uppercase"
+                    <div class="bg-white p-5 rounded-lg shadow-sm border">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Extracted Sentiment</p>
+                        <p class="text-3xl font-black uppercase"
                            :class="{'text-emerald-600': sentimentResult.primary_sentiment === 'positive', 'text-rose-600': sentimentResult.primary_sentiment === 'negative', 'text-amber-500': sentimentResult.primary_sentiment === 'neutral'}">
                             {{ sentimentResult.primary_sentiment }}
                         </p>
                     </div>
-                    <div class="bg-white p-4 rounded shadow-sm border">
-                        <p class="text-sm text-gray-500 uppercase tracking-wider font-bold mb-1">Model Confidence</p>
-                        <p class="text-2xl font-black text-gray-700">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Model Confidence</p>
+                        <p class="text-3xl font-black text-slate-800">
                             {{ (sentimentResult.confidence * 100).toFixed(2) }}%
                         </p>
                     </div>
                 </div>
                 <div class="mt-6 bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono shadow-md">
-                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Technical Execution Metadata</p>
+                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// JSON Technical Metadata</p>
                     <pre>{{ JSON.stringify(sentimentResult.metadata, null, 2) }}</pre>
                 </div>
             </div>
@@ -70,52 +70,55 @@
             </div>
         </main>
 
-        <main v-show="activeTab === 'vision'" class="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Visual Product Detection</h2>
-            <form @submit.prevent="detectObjects" class="space-y-5">
+        <main v-show="activeTab === 'vision'" class="bg-white rounded-xl shadow-lg p-8 border border-gray-100 relative">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 border-l-4 border-indigo-500 pl-3">Visual Product Detection</h2>
+            <form @submit.prevent="detectObjects" class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Upload Product Image:</label>
                     <input 
                         type="file" 
                         accept="image/*"
                         @change="handleFileUpload"
-                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer border border-gray-300 rounded-lg p-2"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer border border-gray-300 rounded-lg p-2 shadow-sm"
                     />
                 </div>
                 
-                <div v-if="imagePreview" class="mt-4 border rounded-lg overflow-hidden max-w-sm">
-                    <img :src="imagePreview" alt="Image preview" class="w-full h-auto object-cover" />
-                </div>
-
                 <button 
                     type="submit" 
                     :disabled="isVisionLoading || !selectedFile"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
-                    {{ isVisionLoading ? 'Processing Vision Model...' : 'Execute Object Detection' }}
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-md">
+                    {{ isVisionLoading ? 'Analyzing Vision Model...' : 'Run Detection' }}
                 </button>
             </form>
 
-            <div v-if="visionResult" class="mt-8 p-6 border border-gray-200 rounded-lg bg-gray-50 shadow-inner">
-                <h3 class="font-extrabold text-xl mb-4 text-gray-800 border-b pb-2">Detection Results</h3>
+            <div v-if="visionResult" class="mt-10 p-6 border-2 border-dashed border-indigo-200 rounded-lg bg-gray-50 shadow-inner">
+                <h3 class="font-extrabold text-xl mb-5 text-gray-800 border-b pb-2">Analysis Results</h3>
                 
-                <div class="mb-4">
-                    <span class="bg-indigo-100 text-indigo-800 text-sm font-bold px-3 py-1 rounded-full">
-                        Total Objects Found: {{ visionResult.object_count }}
+                <div class="mb-6">
+                    <span class="bg-indigo-100 text-indigo-900 text-sm font-black px-4 py-1.5 rounded-full shadow-inner">
+                        Total Objects Detected: {{ visionResult.object_count }}
                     </span>
                 </div>
 
-                <div v-if="visionResult.object_count > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div v-for="(item, index) in visionResult.detected_objects" :key="index" class="bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col justify-between">
-                        <p class="text-lg font-black text-gray-800 capitalize">{{ item.label }}</p>
-                        <p class="text-sm text-gray-500 mt-2">Confidence: <span class="font-bold text-indigo-600">{{ (item.confidence * 100).toFixed(1) }}%</span></p>
+                <div v-if="visionResult.object_count > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+                    <div v-for="(item, index) in visionResult.detected_objects" :key="index" class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 flex flex-col justify-between transition-hover hover:border-indigo-300 hover:shadow-md">
+                        <p class="text-xl font-black text-gray-900 capitalize">{{ item.label }}</p>
+                        <p class="text-sm text-gray-600 mt-2 font-medium">Confidence: <span class="font-black text-indigo-700 text-lg">{{ (item.confidence * 100).toFixed(1) }}%</span></p>
                     </div>
                 </div>
-                <div v-else class="text-gray-500 font-medium italic">
-                    No objects detected with sufficient confidence in this image.
+                <div v-else class="text-gray-500 font-medium italic mb-10 text-center py-6 bg-white rounded-lg border">
+                    No products detected above the confidence threshold ({{ (visionResult.metadata.threshold_applied * 100) }}%) in this image.
                 </div>
 
-                <div class="mt-6 bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono shadow-md">
-                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Vision Metadata</p>
+                <div class="mt-8 border-t border-gray-200 pt-8">
+                    <h4 class="font-bold text-lg mb-4 text-indigo-900">Annotated Visual Result (Dynamic Render)</h4>
+                    <div class="bg-white p-4 rounded-lg shadow border flex justify-center items-center overflow-auto">
+                        <canvas id="detectionCanvas" class="max-w-full h-auto border-2 border-indigo-100 rounded"></canvas>
+                    </div>
+                </div>
+
+                <div class="mt-10 bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono shadow-md">
+                    <p class="text-slate-400 mb-2 border-b border-slate-700 pb-1">// Vision Technical Metadata</p>
                     <pre>{{ JSON.stringify(visionResult.metadata, null, 2) }}</pre>
                 </div>
             </div>
@@ -126,25 +129,27 @@
     </div>
 
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, nextTick } = Vue
 
         createApp({
             setup() {
+                // Application active tab state
                 const activeTab = ref('sentiment')
                 
-                // Sentiment State
+                // Sentiment Analysis State
                 const reviewText = ref('')
                 const sentimentResult = ref(null)
                 const sentimentError = ref(null)
                 const isSentimentLoading = ref(false)
 
-                // Vision State
+                // Object Detection State
                 const selectedFile = ref(null)
-                const imagePreview = ref(null)
+                const imagePreviewUrl = ref(null) // Stores the URL of the uploaded image
                 const visionResult = ref(null)
                 const visionError = ref(null)
                 const isVisionLoading = ref(false)
 
+                // Clean-up Code Sentiment module
                 const analyzeReview = async () => {
                     isSentimentLoading.value = true
                     sentimentError.value = null
@@ -159,7 +164,7 @@
 
                         if (!response.ok) {
                             const errData = await response.json()
-                            throw new Error(errData.detail || 'API communication error')
+                            throw new Error(errData.detail || 'API execution error.')
                         }
                         sentimentResult.value = await response.json()
                     } catch (err) {
@@ -169,15 +174,76 @@
                     }
                 }
 
+                // Handle file selection and prepare preview URL
                 const handleFileUpload = (event) => {
                     const file = event.target.files[0]
                     if (file) {
                         selectedFile.value = file
-                        imagePreview.value = URL.createObjectURL(file)
+                        // Create a temporary object URL for local rendering
+                        imagePreviewUrl.value = URL.createObjectURL(file) 
                         visionResult.value = null
+                        
+                        // Clear previous canvas drawing if a new file is uploaded
+                        nextTick(() => {
+                            const canvas = document.getElementById('detectionCanvas');
+                            if (canvas) {
+                                const ctx = canvas.getContext('2d');
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            }
+                        });
                     }
                 }
 
+                // Helper function: Draws bounding boxes and labels on HTML5 Canvas
+                const drawBoundingBoxes = (objects, imageSrc) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.getElementById('detectionCanvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Set canvas dimensions to match intrinsic image size
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        // 1. Draw the base original image
+                        ctx.drawImage(img, 0, 0);
+
+                        // Define drawing styles (bold lines, large text for native resolution)
+                        ctx.lineWidth = 6;
+                        ctx.strokeStyle = '#4f46e5'; // Indigo color
+                        ctx.fillStyle = '#4f46e5'; 
+                        ctx.font = 'bold 36px sans-serif';
+                        ctx.textBaseline = 'top';
+
+                        // 2. Iterate through detected objects
+                        objects.forEach(obj => {
+                            const { xmin, ymin, xmax, ymax } = obj.bounding_box;
+                            const width = xmax - xmin;
+                            const height = ymax - ymin;
+
+                            // Draw the bounding box rectangle
+                            ctx.strokeRect(xmin, ymin, width, height);
+
+                            // Prepare label text (Label + % Confidence)
+                            const labelText = `${obj.label} ${(obj.confidence * 100).toFixed(0)}%`;
+                            const textWidth = ctx.measureText(labelText).width;
+                            const textHeight = 42; // Font size + padding
+
+                            // Draw label background rectangle
+                            ctx.fillRect(xmin, ymin - textHeight, textWidth + 10, textHeight);
+
+                            // Draw label text in white
+                            ctx.fillStyle = 'white';
+                            ctx.fillText(labelText, xmin + 5, ymin - textHeight + 2);
+                            
+                            // Restore fillStyle for the next box style loop
+                            ctx.fillStyle = '#4f46e5'; 
+                        });
+                    };
+                    img.src = imageSrc;
+                };
+
+                // Object Detection Core module
                 const detectObjects = async () => {
                     isVisionLoading.value = true
                     visionError.value = null
@@ -194,9 +260,20 @@
 
                         if (!response.ok) {
                             const errData = await response.json()
-                            throw new Error(errData.detail || 'API communication error')
+                            throw new Error(errData.detail || 'API execution error.')
                         }
-                        visionResult.value = await response.json()
+                        
+                        const result = await response.json()
+                        visionResult.value = result
+
+                        // Clean Code Principle: DOM manipulation must happen after Vue update
+                        // nextTick ensures the canvas element is visible in the DOM
+                        if (result.object_count > 0 && imagePreviewUrl.value) {
+                            nextTick(() => {
+                                drawBoundingBoxes(result.detected_objects, imagePreviewUrl.value);
+                            });
+                        }
+
                     } catch (err) {
                         visionError.value = err.message
                     } finally {
@@ -207,7 +284,7 @@
                 return { 
                     activeTab, 
                     reviewText, sentimentResult, sentimentError, isSentimentLoading, analyzeReview,
-                    selectedFile, imagePreview, visionResult, visionError, isVisionLoading, handleFileUpload, detectObjects
+                    selectedFile, visionResult, visionError, isVisionLoading, handleFileUpload, detectObjects
                 }
             }
         }).mount('#app')
