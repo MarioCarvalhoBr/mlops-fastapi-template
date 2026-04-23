@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-04-22
+
+### Added
+- **Multi-Registry CI/CD**: Upgraded the `.github/workflows/cd.yml` pipeline to automatically build and push Docker images to both Docker Hub and GitHub Container Registry (GHCR) upon new semantic version tags.
+- **Layer Caching Optimization**: Integrated `docker/build-push-action` with GHA caching to drastically reduce build times for ML dependencies across deployment cycles.
+  
 ## [0.7.0] - 2026-04-22
 
 ### Added
