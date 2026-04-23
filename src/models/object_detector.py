@@ -1,3 +1,8 @@
+"""
+Object Detection Model Layer.
+Provides a clean abstraction over the Hugging Face Transformers pipeline for object detection.
+Isolates deep learning specific logic, device management, and pipeline setup from the rest of the app.
+"""
 import os
 
 from PIL import Image
@@ -16,15 +21,21 @@ class ObjectDetectorModel:
     """
 
     def __init__(self) -> None:
+        """
+        Initializes the model pipeline based on application settings.
+        Handles offline mode configurations and optimal device allocation (CPU vs GPU).
+        """
         self.model_name = settings.vision_model_id
         self.version = "0.3.0"
 
+        # Force the library to use only locally cached models if offline mode is toggled via settings.
         if settings.hf_hub_offline:
             os.environ["TRANSFORMERS_OFFLINE"] = "1"
             logger.info("Hugging Face Offline Mode is enabled.")
 
         logger.info(f"Loading vision model {self.model_name} on device: {settings.device}")
 
+        # Initialize the pipeline, moving execution to the GPU (device=0) if "cuda" is available.
         self.detector = pipeline(
             "object-detection",
             model=self.model_name,
@@ -34,7 +45,13 @@ class ObjectDetectorModel:
     def predict(self, image: Image.Image) -> list:
         """
         Executes object detection on a given PIL Image.
-        Returns a list of dictionaries containing labels, scores, and bounding boxes.
+
+        Args:
+            image (Image.Image): The preprocessed RGB image.
+
+        Returns:
+            list: A list of detection dictionaries, each containing 'label', 'score', and 'box'.
         """
+        # The transformers pipeline handles the batching and tensor conversions natively.
         results = self.detector(image)
         return results

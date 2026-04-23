@@ -12,7 +12,7 @@
 This repository provides a production-grade template for serving Machine Learning models using **FastAPI**, tailored for E-commerce intelligence (**Retail-AI**). The project focuses on rigorous Software Engineering patterns applied to MLOps, including clean architecture, automated testing, performance monitoring, and real-time frontend integration.
 
 ## 📋 Table of Contents
-- [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-retail-ai-mlops-fastapi-template)
+- [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-mlops-fastapi-template)
   - [📋 Table of Contents](#-table-of-contents)
   - [🌟 Overview](#-overview)
   - [📸 Dashboard Preview](#-dashboard-preview)
@@ -70,6 +70,7 @@ Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the pla
 - [x] **v0.6.0 - Testing and Performance:** Comprehensive unit and integration tests, code coverage reporting, and Locust load testing to validate API performance under concurrent pressure.
 - [x] **v0.7.0 - CI/CD and Dockerization:** GitHub Actions workflows for automated testing, code quality checks, and production-ready Docker configuration with model caching for seamless deployment.
 - [x] **v0.8.0 - Deploy Docker Image to Docker Hub:** Publish the containerized AI engine to Docker Hub for easy distribution and deployment across various environments.
+- [x] **v0.9.0 - Documentation and Cleanup:** Finalize README with detailed instructions, add inline code comments, and ensure all documentation is clear and comprehensive for users and contributors.
 ---
 
 ## 🛠 Technologies Used

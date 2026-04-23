@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-04-22
+
+### Added
+- **Comprehensive Documentation**: Finalized the `README.md` with detailed instructions on local setup, Docker deployment, and architectural overviews.
+- **Inline Code Documentation**: Added extensive docstrings and inline comments across all Python modules (`src/` and `tests/`) to improve maintainability and onboarding for new contributors.
+- **Visual Guides**: Included references to architectural diagrams and dashboard screenshots to provide a clearer understanding of the multimodal capabilities.
+
+### Changed
+- **Codebase Cleanup**: Removed dead code, unused imports, and consolidated redundant configurations across the system.
+- **Architectural Clarity**: Refined the `copilot-instructions.md` and repository structure to enforce strict adherence to Clean Architecture principles in a visible and documented manner.
+  
 ## [0.8.0] - 2026-04-22
 
 ### Added
