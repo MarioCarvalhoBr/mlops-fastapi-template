@@ -14,7 +14,10 @@
         <header class="mb-8 border-b border-gray-300 pb-4 flex justify-between items-end gap-4 flex-wrap">
             <div>
                 <h1 class="text-4xl font-extrabold text-indigo-900 tracking-tight">Retail-AI</h1>
-                <p class="text-gray-600 mt-1 font-medium">v0.4.0 - Intelligence Engine Dashboard</p>
+                <p class="text-gray-600 mt-1 font-medium">v1.2.0 - Intelligence Engine Dashboard</p>
+                <p class="text-sm font-bold mt-2" :class="systemDevice === 'gpu' ? 'text-emerald-600' : 'text-amber-600'">
+                    Hardware Acceleration: <span class="uppercase border px-2 py-0.5 rounded ml-1 bg-white">{{ systemDevice || 'Checking...' }}</span>
+                </p>
             </div>
             <div class="flex space-x-3">
                 <button @click="activeTab = 'sentiment'"
@@ -264,11 +267,30 @@
     </div>
 
     <script>
-        const { createApp, ref, nextTick } = Vue
+        const { createApp, ref, onMounted, nextTick } = Vue
 
         createApp({
             setup() {
                 const activeTab = ref('sentiment')
+                const systemDevice = ref(null)
+
+                const checkSystemHealth = async () => {
+                    try {
+                        const response = await fetch('http://localhost:8000/health')
+                        if (response.ok) {
+                            const data = await response.json()
+                            systemDevice.value = data.system?.device || 'cpu'
+                        } else {
+                            systemDevice.value = 'unknown'
+                        }
+                    } catch (err) {
+                        systemDevice.value = 'offline'
+                    }
+                }
+
+                onMounted(() => {
+                    checkSystemHealth()
+                })
 
                 const reviewText = ref('')
                 const sentimentResult = ref(null)
@@ -453,7 +475,7 @@
                 }
 
                 return {
-                    activeTab,
+                    activeTab, systemDevice,
                     reviewText, sentimentResult, sentimentError, isSentimentLoading, analyzeReview,
                     selectedFile, visionResult, visionError, isVisionLoading, handleFileUpload, detectObjects,
                     searchQuery, searchResult, searchError, isSearchLoading, executeSearch,

@@ -115,7 +115,9 @@ async def health_check():
     Service health and version check.
     Used by load balancers and orchestrators to verify service availability.
     """
-    return {"status": "ok", "version": "0.1.0"}
+    import torch
+    device = "gpu" if torch.cuda.is_available() else "cpu"
+    return {"status": "ok", "version": "0.1.0", "system": {"device": device}}
 
 
 @router.post("/predict")
