@@ -116,6 +116,7 @@ async def health_check():
     Used by load balancers and orchestrators to verify service availability.
     """
     import torch
+
     device = "gpu" if torch.cuda.is_available() else "cpu"
     return {"status": "ok", "version": "0.1.0", "system": {"device": device}}
 
