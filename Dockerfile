@@ -25,11 +25,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Poetry globally
 RUN pip install "poetry==$POETRY_VERSION"
 
+# Variable that defines the group: 'cpu' or 'gpu'
+ARG INSTALL_GROUP=cpu
+
 # Copy ONLY dependency manifests first to leverage Docker Layer Caching
 COPY pyproject.toml poetry.lock ./
 
 # Install production dependencies only (ignores pytest, mypy, locust, etc.)
-RUN poetry install --only main --no-interaction --no-ansi \
+RUN poetry install --only main --with ${INSTALL_GROUP} --no-interaction --no-ansi \
     && rm -rf ~/.cache/pypoetry \
     && rm -rf ~/.cache/pip
 

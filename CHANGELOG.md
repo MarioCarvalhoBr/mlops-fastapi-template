@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-04-22
 
 ### Added
+- **Multi-Architecture Builds (CPU/GPU)**: Introduced distinct dependency groups in `pyproject.toml` to separate lightweight CPU deployments from heavy GPU (CUDA) setups.
+- **Matrix Strategy CI/CD**: Upgraded `.github/workflows/cd.yml` to build and push both CPU and GPU Docker images in parallel, utilizing Docker build arguments (`INSTALL_GROUP`).
 - **Production Readiness**: Official stable release marking the completion of the core MLOps architecture.
 - **Unified Frontend/Backend**: The API now serves the dashboard directly at the root (`/`) using `StaticFiles` and `aiofiles`.
 - **Full Automation**: Seamless CI/CD pipeline integrated with Docker Hub and GHCR for zero-touch deployment.
+
+### Changed
+- **Optimized Dockerfile**: Added strict inline cache clearing (`rm -rf ~/.cache/pypoetry && rm -rf ~/.cache/pip`) within the `RUN poetry install` layer, drastically reducing the final image size.
+- **Dependency Management**: Re-routed PyTorch CPU downloads directly from the official PyTorch wheel index to prevent unintended CUDA bloat on lightweight environments.
 
 ### Fixed
 - **Hot-Reload Sync**: Improved the `docker-compose.yml` volume mapping for real-time local development.
