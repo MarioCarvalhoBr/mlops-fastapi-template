@@ -135,6 +135,15 @@ retail-ai-mlops-fastapi-template/
     chmod +x setup_env.sh
     ./setup_env.sh
     ```
+    
+    *Alternatively*, you can install the dependencies manually using Poetry. You can choose to install in CPU mode (default) or GPU mode:
+    ```bash
+    # Install dependencies for CPU mode
+    poetry install --with cpu
+    
+    # Or, install dependencies for GPU mode
+    poetry install --with gpu
+    ```
 
 3.  **Environment Variables:**
     Configure your `.env` file (created automatically from `.env.example`). Toggle `HF_HUB_OFFLINE=1` to enforce offline execution if the AI models are already cached in your environment.
@@ -146,6 +155,9 @@ retail-ai-mlops-fastapi-template/
 ### Running via Docker (Production Recommended)
 The entire AI engine can be containerized and run with a single command. The Docker configuration automatically persists your product catalog and caches the heavy Hugging Face models so they are downloaded only once.
 
+You can run the Docker container in two modes: CPU (default) or GPU.
+
+**Running in CPU Mode (Default)**
 1. Build and start the container in detached mode:
    ```bash
    # First time setup (builds the image and starts the container)
@@ -154,6 +166,15 @@ The entire AI engine can be containerized and run with a single command. The Doc
    # Subsequent runs (faster startup since the image is already built and models are cached)
    docker-compose up -d
    ```
+
+**Running in GPU Mode**
+If you have an NVIDIA GPU and want to leverage hardware acceleration, you can build the image with the GPU dependencies:
+1. Build and start the container in detached mode with the `INSTALL_GROUP=gpu` argument:
+   ```bash
+   # Build the image and start the container in GPU mode
+   INSTALL_GROUP=gpu docker-compose up -d --build
+   ```
+
 2. Monitor the logs to ensure models are downloading/loading correctly:
    ```bash
    docker-compose logs -f
@@ -175,15 +196,31 @@ The project follows a rigorous DevOps lifecycle. Every official release triggers
   - **GitHub Container Registry (GHCR)**: Images are also available at `ghcr.io/mariocarvalhobr/mlops-fastapi-template`.
 - **Versioning**: Uses Semantic Versioning (SemVer). The `:latest` tag always points to the most recent stable production release.
 
-To pull the production image directly:
-```bash
-  # Download the pre-built image from Docker Hub
-  docker pull mariocarvalhobr/retail-ai:latest
-  # OR
-  docker pull ghcr.io/mariocarvalhobr/retail-ai-mlops-fastapi-template:latest
+To pull the production image directly, choose the explicitly tailored version for your hardware:
 
-  # Run the container with the production image
-  docker run -d -p 8000:8000 --name retail_ai_engine mariocarvalhobr/retail-ai:latest
+- **`retail-ai:latest-cpu`** — Lightweight, for your local PC or standard web servers.
+- **`retail-ai:latest-gpu`** — Heavyweight, includes NVIDIA drivers and CUDA optimizations for high-performance inference.
+
+**For CPU Mode (Lightweight / Default):**
+```bash
+  # Download the pre-built CPU image from Docker Hub
+  docker pull mariocarvalhobr/retail-ai:latest-cpu
+  # OR
+  docker pull ghcr.io/mariocarvalhobr/retail-ai-mlops-fastapi-template:latest-cpu
+
+  # Run the container with the CPU image
+  docker run -d -p 8000:8000 --name retail_ai_engine mariocarvalhobr/retail-ai:latest-cpu
+```
+
+**For GPU Mode (Heavy / High Performance):**
+```bash
+  # Download the pre-built GPU image from Docker Hub
+  docker pull mariocarvalhobr/retail-ai:latest-gpu
+  # OR
+  docker pull ghcr.io/mariocarvalhobr/retail-ai-mlops-fastapi-template:latest-gpu
+
+  # Run the container providing NVIDIA GPU access
+  docker run --gpus all -d -p 8000:8000 --name retail_ai_engine mariocarvalhobr/retail-ai:latest-gpu
 ```
 
 ### Starting the Backend - Manually:
