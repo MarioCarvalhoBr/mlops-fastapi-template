@@ -69,6 +69,7 @@ Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the pla
 - [x] **v0.5.0 - Multimodal Search:** True zero-shot cross-modal retrieval mapping text and images to a joint vector space using CLIP (`openai/clip-vit-base-patch32`), backed by a physical file-based product catalog.
 - [x] **v0.6.0 - Testing and Performance:** Comprehensive unit and integration tests, code coverage reporting, and Locust load testing to validate API performance under concurrent pressure.
 - [x] **v0.7.0 - CI/CD and Dockerization:** GitHub Actions workflows for automated testing, code quality checks, and production-ready Docker configuration with model caching for seamless deployment.
+- [x] **v0.8.0 - Deploy Docker Image to Docker Hub:** Publish the containerized AI engine to Docker Hub for easy distribution and deployment across various environments.
 ---
 
 ## 🛠 Technologies Used

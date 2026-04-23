@@ -96,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `README.md` with full project context and instructions.
 - `CODE_OF_CONDUCT.md` and `LICENSE` (MIT).
 
+[0.8.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.8.0
 [0.7.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.7.0
 [0.6.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.6.0
 [0.5.0]: https://github.com/MarioCarvalhoBr/mlops-fastapi-template/releases/tag/v0.5.0
