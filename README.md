@@ -34,6 +34,8 @@ This repository provides a production-grade template for serving Machine Learnin
     - [How to Add a New Product](#how-to-add-a-new-product)
   - [🧪 Code Quality and Tests](#-code-quality-and-tests)
   - [📈 Load Testing](#-load-testing)
+  - [⚠️ Common Errors and Troubleshooting](#️-common-errors-and-troubleshooting)
+    - [Docker Network / `iptables` Error](#docker-network--iptables-error)
   - [📄 License](#-license)
   - [👥 Authors](#-authors)
 
@@ -299,6 +301,37 @@ To validate how the API behaves under concurrent pressure:
 1. Ensure the backend API is running in one terminal.
 2. In another terminal, execute: `make load-test`
 3. Access `http://localhost:8089` to configure the number of simulated users and observe real-time latency graphs.
+
+
+---
+
+## ⚠️ Common Errors and Troubleshooting
+
+### Docker Network / `iptables` Error
+
+If you encounter errors related to `iptables` or network creation when running `docker-compose up -d` (for example, `Chain 'DOCKER-ISOLATION-STAGE-2' does not exist`), it means the host OS rules were flushed or reloaded and Docker lost its networking chains.
+
+**Solution 1: Restart Docker Daemon**  
+Usually, just restarting the service forces Docker to recreate its chains:
+```bash
+sudo systemctl restart docker
+```
+
+**Solution 2: Flush and Rebuild iptables**  
+If the above doesn't work, clear the filter tables explicitly before restarting:
+```bash
+sudo iptables -t filter -F
+sudo iptables -t filter -X
+sudo systemctl restart docker
+```
+
+**Solution 3: Switch to iptables-legacy (Linux specific)**  
+If your system is using `nftables` and conflicting with Docker, you can revert to legacy `iptables`:
+```bash
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+sudo systemctl restart docker
+docker-compose up -d
+```
 
 ---
 
