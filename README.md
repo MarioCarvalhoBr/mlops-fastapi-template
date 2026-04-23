@@ -26,6 +26,7 @@ This repository provides a production-grade template for serving Machine Learnin
   - [🚀 Usage and Execution](#-usage-and-execution)
     - [Starting the Backend - Dockerized:](#starting-the-backend---dockerized)
     - [Running via Docker (Production Recommended)](#running-via-docker-production-recommended)
+    - [CI/CD \& Production Distribution](#cicd--production-distribution)
     - [Starting the Backend - Manually:](#starting-the-backend---manually)
     - [Running the Frontend Dashboard](#running-the-frontend-dashboard)
   - [🛒 Managing the Product Catalog (Multimodal Search)](#-managing-the-product-catalog-multimodal-search)
@@ -163,6 +164,27 @@ The entire AI engine can be containerized and run with a single command. The Doc
    ```
 *Note: The frontend can still be accessed by opening `frontend/index.html` locally, as it communicates directly with `localhost:8000` exposed by the container.*
 
+### CI/CD & Production Distribution
+
+The project follows a rigorous DevOps lifecycle. Every official release triggers an automated pipeline that ensures code quality and global availability:
+
+- **Automated Testing**: Runs the full suite of unit and integration tests using `pytest` and `unittest.mock`.
+- **Static Analysis**: Enforces strict typing with `MyPy` and code quality with `Flake8`.
+- **Container Registries**:
+  - **Docker Hub**: Images are automatically built and pushed to `mariocarvalhobr/retail-ai`.
+  - **GitHub Container Registry (GHCR)**: Images are also available at `ghcr.io/mariocarvalhobr/mlops-fastapi-template`.
+- **Versioning**: Uses Semantic Versioning (SemVer). The `:latest` tag always points to the most recent stable production release.
+
+To pull the production image directly:
+```bash
+  # Download the pre-built image from Docker Hub
+  docker pull mariocarvalhobr/retail-ai:latest
+  # OR
+  docker pull ghcr.io/mariocarvalhobr/retail-ai-mlops-fastapi-template:latest
+
+  # Run the container with the production image
+  docker run -d -p 8000:8000 --name retail_ai_engine mariocarvalhobr/retail-ai:latest
+```
 
 ### Starting the Backend - Manually:
 To start the FastAPI development server with *hot-reload*:

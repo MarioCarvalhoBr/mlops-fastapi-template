@@ -29,7 +29,9 @@ RUN pip install "poetry==$POETRY_VERSION"
 COPY pyproject.toml poetry.lock ./
 
 # Install production dependencies only (ignores pytest, mypy, locust, etc.)
-RUN poetry install --only main --no-interaction --no-ansi
+RUN poetry install --only main --no-interaction --no-ansi \
+    && rm -rf ~/.cache/pypoetry \
+    && rm -rf ~/.cache/pip
 
 # Copy application source code and configurations
 COPY src/ src/
