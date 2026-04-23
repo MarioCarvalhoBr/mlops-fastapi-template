@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Define 'cpu' as the default group, but allow override via build args (e.g., for GPU builds)
+        INSTALL_GROUP: ${INSTALL_GROUP:-cpu}
     container_name: retail_ai_engine
     ports:
       - "8000:8000"
