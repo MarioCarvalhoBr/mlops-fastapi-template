@@ -74,6 +74,7 @@ Below is a preview of the Retail-AI MLOps Dashboard in action. *(Replace the pla
 - [x] **v0.7.0 - CI/CD and Dockerization:** GitHub Actions workflows for automated testing, code quality checks, and production-ready Docker configuration with model caching for seamless deployment.
 - [x] **v0.8.0 - Deploy Docker Image to Docker Hub:** Publish the containerized AI engine to Docker Hub for easy distribution and deployment across various environments.
 - [x] **v0.9.0 - Documentation and Cleanup:** Finalize README with detailed instructions, add inline code comments, and ensure all documentation is clear and comprehensive for users and contributors.
+- [x] **v1.0.0 - Stable Release:** Mark the project as stable and ready for production use, with all features implemented, tested, and documented.
 ---
 
 ## 🛠 Technologies Used
