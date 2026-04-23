@@ -2,17 +2,17 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100.0%2B-009688)](https://fastapi.tiangolo.com/)
-[![CI](https://github.com/MarioCarvalhoBr/mlops-fastapi-template/actions/workflows/ci.yml/badge.svg)](https://github.com/MarioCarvalhoBr/mlops-fastapi-template/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/MarioCarvalhoBr/mlops-fastapi-template/branch/main/graph/badge.svg)](https://codecov.io/gh/MarioCarvalhoBr/mlops-fastapi-template)
+[![CI](https://github.com/MarioCarvalhoBr/retail-ai-mlops-fastapi-template/actions/workflows/ci.yml/badge.svg)](https://github.com/MarioCarvalhoBr/retail-ai-mlops-fastapi-template/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/MarioCarvalhoBr/retail-ai-mlops-fastapi-template/branch/main/graph/badge.svg)](https://codecov.io/gh/MarioCarvalhoBr/retail-ai-mlops-fastapi-template)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-![Last Commit](https://img.shields.io/github/last-commit/MarioCarvalhoBr/mlops-fastapi-template?style=flat&logo=git&logoColor=white&color=0080ff) ![Top Language](https://img.shields.io/github/languages/top/MarioCarvalhoBr/mlops-fastapi-template?style=flat&color=0080ff) ![Language Count](https://img.shields.io/github/languages/count/MarioCarvalhoBr/mlops-fastapi-template?style=flat&color=0080ff) 
+![Last Commit](https://img.shields.io/github/last-commit/MarioCarvalhoBr/retail-ai-mlops-fastapi-template?style=flat&logo=git&logoColor=white&color=0080ff) ![Top Language](https://img.shields.io/github/languages/top/MarioCarvalhoBr/retail-ai-mlops-fastapi-template?style=flat&color=0080ff) ![Language Count](https://img.shields.io/github/languages/count/MarioCarvalhoBr/retail-ai-mlops-fastapi-template?style=flat&color=0080ff) 
 
 This repository provides a production-grade template for serving Machine Learning models using **FastAPI**, tailored for E-commerce intelligence (**Retail-AI**). The project focuses on rigorous Software Engineering patterns applied to MLOps, including clean architecture, automated testing, performance monitoring, and real-time frontend integration.
 
 ## 📋 Table of Contents
-- [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-mlops-fastapi-template)
+- [🚀 Retail-AI (MLOps FastAPI Template)](#-retail-ai-retail-ai-mlops-fastapi-template)
   - [📋 Table of Contents](#-table-of-contents)
   - [🌟 Overview](#-overview)
   - [📸 Dashboard Preview](#-dashboard-preview)
@@ -90,7 +90,7 @@ The project integrates the most modern tools of the Python and Web ecosystem for
 The organization follows the principle of separation of concerns:
 
 ```text
-mlops-fastapi-template/
+retail-ai-mlops-fastapi-template/
 ├── data/
 │   └── catalog/                # Physical database for the Multimodal Search
 ├── frontend/                   # Vue.js 3 + Tailwind CSS Dashboard
@@ -123,8 +123,8 @@ mlops-fastapi-template/
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/MarioCarvalhoBr/mlops-fastapi-template.git](https://github.com/MarioCarvalhoBr/mlops-fastapi-template.git)
-    cd mlops-fastapi-template
+    git clone [https://github.com/MarioCarvalhoBr/retail-ai-mlops-fastapi-template.git](https://github.com/MarioCarvalhoBr/retail-ai-mlops-fastapi-template.git)
+    cd retail-ai-mlops-fastapi-template
     ```
 
 2.  **Environment Setup:**

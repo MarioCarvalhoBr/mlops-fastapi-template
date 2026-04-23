@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mlops-fastapi-template"
+name = "retail-ai-mlops-fastapi-template"
 version = "0.8.0"
 description = "Retail-AI: Intelligence Engine for E-commerce using FastAPI and Hugging Face"
 authors = ["Mário de Araújo Carvalho"]
