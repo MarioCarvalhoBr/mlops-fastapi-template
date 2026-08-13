@@ -7,6 +7,7 @@ business logic and handles response structuring and error handling.
 from typing import Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 
 from src.core.logger import logger
@@ -122,21 +123,24 @@ async def health_check():
 
 
 @router.post("/predict")
-async def predict_route(input: str):
+def predict_route(input: str):
     """
     Endpoint that receives text via query parameter.
     Delegates to the prediction service.
+    Declared synchronously so FastAPI runs it in a worker thread, leaving the event
+    loop free to keep serving other requests (including the static frontend).
     """
     prediction_result = predict_service(input)
     return {"prediction": prediction_result, "version": "0.1.0"}
 
 
 @router.post("/analyze-review", response_model=SentimentResponse, tags=["Retail-AI Sentiment"])
-async def analyze_review_route(request: ReviewRequest):
+def analyze_review_route(request: ReviewRequest):
     """
     Receives a product review and returns its sentiment classification.
     Catches business logic exceptions and maps them to 400 Bad Request,
     while mapping unexpected crashes to 500 Internal Server Error.
+    Runs in a worker thread so blocking model inference never stalls the event loop.
     """
     try:
         return analyze_product_review(request.text)
@@ -157,7 +161,8 @@ async def detect_objects_route(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Invalid file type. Must be an image.")
     try:
         image_bytes = await file.read()
-        return analyze_product_image(image_bytes)
+        # Offload the blocking inference to a worker thread to keep the event loop free.
+        return await run_in_threadpool(analyze_product_image, image_bytes)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
@@ -166,10 +171,11 @@ async def detect_objects_route(file: UploadFile = File(...)):
 
 
 @router.post("/semantic-search", response_model=SearchResponse, tags=["Retail-AI Retrieval"])
-async def semantic_search_route(request: SearchRequest):
+def semantic_search_route(request: SearchRequest):
     """
     Semantic Search endpoint mapping user intent to product vector embeddings.
     Retrieves the top K catalog items that semantically match the text query.
+    Runs in a worker thread so encoding never stalls the event loop.
     """
     try:
         return search_similar_products(request.query, request.top_k)
@@ -208,7 +214,8 @@ async def multimodal_search_route(
         image_bytes = await file.read()
 
     try:
-        return search_multimodal_catalog(query, image_bytes, top_k)
+        # Offload the blocking inference to a worker thread to keep the event loop free.
+        return await run_in_threadpool(search_multimodal_catalog, query, image_bytes, top_k)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:

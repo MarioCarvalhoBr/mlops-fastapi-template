@@ -1,5 +1,6 @@
 import io
 import json
+import threading
 from pathlib import Path
 from typing import Optional
 
@@ -11,10 +12,30 @@ from src.core.logger import logger
 from src.models.multimodal_model import MultimodalModel
 
 settings = load_config()
-_multimodal_model = MultimodalModel()
+
+# The CLIP weights and the catalog index are built on first use instead of at import
+# time, so the ASGI server can bind and serve the frontend without waiting on them.
+_multimodal_model: Optional[MultimodalModel] = None
+_catalog_loaded = False
+_load_lock = threading.RLock()
 
 _catalog_items: list[dict] = []
 _catalog_embeddings: Optional[torch.Tensor] = None
+
+
+def _get_model() -> MultimodalModel:
+    """Loads the multimodal (CLIP) model once and reuses it across requests."""
+    global _multimodal_model
+
+    # Double-checked locking: requests arriving together during the cold start wait for
+    # a single load instead of each pulling its own copy of the weights.
+    if _multimodal_model is None:
+        with _load_lock:
+            if _multimodal_model is None:
+                _multimodal_model = MultimodalModel()
+
+    return _multimodal_model
+
 
 SUPPORTED_IMAGE_EXTENSIONS = [
     "*.jpg",
@@ -81,7 +102,7 @@ def _encode_product_images(images_dir: Path) -> list[torch.Tensor]:
     for img_path in image_files:
         try:
             img = Image.open(img_path).convert("RGB")
-            image_embs.append(_multimodal_model.encode_image(img))
+            image_embs.append(_get_model().encode_image(img))
         except Exception as e:
             logger.warning(f"Failed to load image {img_path}: {e}")
 
@@ -104,7 +125,7 @@ def _process_product_directory(folder: Path) -> Optional[tuple[dict, torch.Tenso
             info = json.load(f)
 
         text_content = f"{info.get('name', '')} {info.get('description', '')}"
-        text_emb = _multimodal_model.encode_text(text_content)
+        text_emb = _get_model().encode_text(text_content)
 
         image_embs = _encode_product_images(images_dir)
 
@@ -124,7 +145,7 @@ def _process_product_directory(folder: Path) -> Optional[tuple[dict, torch.Tenso
 
 def load_multimodal_catalog():
     """Main orchestration function to load products and compute joint embeddings."""
-    global _catalog_items, _catalog_embeddings
+    global _catalog_items, _catalog_embeddings, _catalog_loaded
 
     catalog_path = Path(settings.catalog_data_path)
     if not catalog_path.exists():
@@ -149,11 +170,17 @@ def load_multimodal_catalog():
     else:
         _catalog_embeddings = None
 
+    _catalog_loaded = True
     logger.info(f"Multimodal catalog loaded successfully: {len(_catalog_items)} products indexed.")
 
 
-# Execute initialization load
-load_multimodal_catalog()
+def _ensure_catalog() -> None:
+    """Indexes the catalog on the first multimodal request, then keeps it in memory."""
+    # Re-entrant lock: indexing calls _get_model(), which takes this same lock.
+    if not _catalog_loaded:
+        with _load_lock:
+            if not _catalog_loaded:
+                load_multimodal_catalog()
 
 
 def search_multimodal_catalog(query_text: Optional[str] = None, query_image_bytes: Optional[bytes] = None, top_k: int = 3) -> dict:
@@ -161,23 +188,26 @@ def search_multimodal_catalog(query_text: Optional[str] = None, query_image_byte
     Executes a multimodal search combining text intent and visual features.
     Strictly types optional parameters to avoid implicit Optional violations.
     """
-    if not _catalog_items or _catalog_embeddings is None:
-        raise RuntimeError("Catalog is empty or failed to load.")
-
     if not query_text and not query_image_bytes:
         raise ValueError("Must provide either a text query or an image file.")
+
+    _ensure_catalog()
+
+    if not _catalog_items or _catalog_embeddings is None:
+        raise RuntimeError("Catalog is empty or failed to load.")
 
     logger.info(f"Executing multimodal search. Text: {bool(query_text)}. Image: {bool(query_image_bytes)}")
 
     try:
+        multimodal_model = _get_model()
         query_embs = []
 
         if query_text:
-            query_embs.append(_multimodal_model.encode_text(query_text))
+            query_embs.append(multimodal_model.encode_text(query_text))
 
         if query_image_bytes:
             img = Image.open(io.BytesIO(query_image_bytes)).convert("RGB")
-            query_embs.append(_multimodal_model.encode_image(img))
+            query_embs.append(multimodal_model.encode_image(img))
 
         if len(query_embs) > 1:
             joint_query_emb = torch.mean(torch.stack(query_embs), dim=0)
@@ -210,8 +240,8 @@ def search_multimodal_catalog(query_text: Optional[str] = None, query_image_byte
             "query_type": query_type,
             "results": results,
             "metadata": {
-                "model": _multimodal_model.model_name,
-                "version": _multimodal_model.version,
+                "model": multimodal_model.model_name,
+                "version": multimodal_model.version,
                 "catalog_size": len(_catalog_items),
             },
         }

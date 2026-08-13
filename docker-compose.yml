@@ -26,6 +26,9 @@ services:
       - ENVIRONMENT=development
       - DEBUG=True
       - HF_HUB_OFFLINE=0
+      # O backend Xet do Hugging Face fica pendurado nesta rede (download para a 0 b/s
+      # e nunca retoma). Forçamos o download HTTPS clássico pelo CDN.
+      - HF_HUB_DISABLE_XET=1
     
     # Sobrescreve o CMD do Dockerfile para ativar o modo --reload
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload

@@ -5,6 +5,8 @@ to image formats compatible with the Hugging Face models, executes the model pre
 and applies business logic thresholds to filter results.
 """
 import io
+import threading
+from typing import Optional
 
 from PIL import Image, UnidentifiedImageError
 
@@ -14,9 +16,26 @@ from src.models.object_detector import ObjectDetectorModel
 
 settings = load_config()
 
-# Instantiate the object detector model uniquely as a singleton to avoid reloading into memory per request.
-_object_detector = ObjectDetectorModel()
-logger.info(f"Vision Service initialized with model: {_object_detector.model_name}")
+# Detector singleton, resolved on first use rather than at import time so the API
+# (and the static frontend) becomes reachable without waiting on model weights.
+_object_detector: Optional[ObjectDetectorModel] = None
+_load_lock = threading.Lock()
+
+
+def _get_detector() -> ObjectDetectorModel:
+    """Loads the object detection model once and reuses it across requests."""
+    global _object_detector
+
+    # Double-checked locking: requests arriving together during the cold start wait for
+    # a single load instead of each pulling its own copy of the weights.
+    if _object_detector is None:
+        with _load_lock:
+            if _object_detector is None:
+                detector = ObjectDetectorModel()
+                logger.info(f"Vision Service initialized with model: {detector.model_name}")
+                _object_detector = detector
+
+    return _object_detector
 
 
 def analyze_product_image(image_bytes: bytes) -> dict:
@@ -50,8 +69,10 @@ def analyze_product_image(image_bytes: bytes) -> dict:
     logger.info(f"Processing image for object detection. Size: {image.size}")
 
     try:
+        object_detector = _get_detector()
+
         # Perform pure inference via the model abstraction class
-        raw_predictions = _object_detector.predict(image)
+        raw_predictions = object_detector.predict(image)
 
         # Filter predictions based on business confidence threshold
         detected_objects = []
@@ -73,8 +94,8 @@ def analyze_product_image(image_bytes: bytes) -> dict:
             "detected_objects": detected_objects,
             "object_count": len(detected_objects),
             "metadata": {
-                "model": _object_detector.model_name,
-                "version": _object_detector.version,
+                "model": object_detector.model_name,
+                "version": object_detector.version,
                 "threshold_applied": settings.vision_confidence_threshold,
             },
         }

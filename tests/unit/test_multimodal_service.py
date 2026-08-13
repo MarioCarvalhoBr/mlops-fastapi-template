@@ -1,5 +1,5 @@
 import io
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
@@ -17,6 +17,14 @@ class TestMultimodalService:
         # Save originals
         self.original_items = multimodal_service._catalog_items
         self.original_embeddings = multimodal_service._catalog_embeddings
+        self.original_model = multimodal_service._multimodal_model
+        self.original_loaded = multimodal_service._catalog_loaded
+
+        # Stand in for the CLIP model, which is otherwise loaded lazily on first use.
+        multimodal_service._multimodal_model = MagicMock()
+        # Mark the catalog as already indexed so the service uses the fixtures below
+        # instead of rebuilding the index from disk.
+        multimodal_service._catalog_loaded = True
 
         # Create mock data
         multimodal_service._catalog_items = [
@@ -31,8 +39,10 @@ class TestMultimodalService:
         # Restore originals
         multimodal_service._catalog_items = self.original_items
         multimodal_service._catalog_embeddings = self.original_embeddings
+        multimodal_service._multimodal_model = self.original_model
+        multimodal_service._catalog_loaded = self.original_loaded
 
-    @patch.object(multimodal_service._multimodal_model, "encode_text")
+    @patch("src.services.multimodal_service._multimodal_model.encode_text")
     def test_search_multimodal_text_only(self, mock_encode_text):
         """Test multimodal search using only text intent."""
         # Mock encoding to have identical semantic feature as index 1 (Shoes)
@@ -46,7 +56,7 @@ class TestMultimodalService:
         assert result["results"][0]["similarity_score"] == pytest.approx(1.0)
         mock_encode_text.assert_called_once_with("Running Shoes")
 
-    @patch.object(multimodal_service._multimodal_model, "encode_image")
+    @patch("src.services.multimodal_service._multimodal_model.encode_image")
     def test_search_multimodal_image_only(self, mock_encode_image):
         """Test multimodal search using only an image."""
         # Predict backpack
@@ -65,8 +75,8 @@ class TestMultimodalService:
         assert result["results"][0]["similarity_score"] == pytest.approx(1.0)
         mock_encode_image.assert_called_once()
 
-    @patch.object(multimodal_service._multimodal_model, "encode_text")
-    @patch.object(multimodal_service._multimodal_model, "encode_image")
+    @patch("src.services.multimodal_service._multimodal_model.encode_text")
+    @patch("src.services.multimodal_service._multimodal_model.encode_image")
     def test_search_multimodal_late_fusion(self, mock_encode_image, mock_encode_text):
         """Test multimodal search with both text and image (late fusion)."""
         mock_encode_text.return_value = torch.tensor([[1.0, 0.0, 0.0, 0.0]])

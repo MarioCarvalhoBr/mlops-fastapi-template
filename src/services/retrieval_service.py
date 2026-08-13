@@ -3,15 +3,20 @@ Retrieval Service Layer.
 Manages the orchestration of semantic search across a product catalog.
 Handles encoding the database on startup and executing fast tensor-based cosine similarity searches over in-memory representations when queried.
 """
+import threading
+from typing import Optional
+
 import torch
 
 from src.core.logger import logger
 from src.models.retrieval_model import RetrievalModel
 
-# Load embedding model singleton.
-# It handles the dense vector representation over the textual attributes.
-_retrieval_model = RetrievalModel()
-logger.info(f"Retrieval Service initialized with model: {_retrieval_model.model_name}")
+# Embedding model singleton, resolved lazily on the first search request.
+# Loading it at import time would block the ASGI server from binding its socket
+# (and therefore from serving the frontend) until the weights finish downloading.
+_retrieval_model: Optional[RetrievalModel] = None
+_product_embeddings: Optional[torch.Tensor] = None
+_load_lock = threading.Lock()
 
 # In-memory product catalog database.
 # In a true production scaled environment, this would be replaced with a vector search engine like Qdrant or Milvus.
@@ -54,11 +59,29 @@ _product_catalog = [
     },
 ]
 
-logger.info(f"Indexing in-memory catalog with {len(_product_catalog)} items...")
-# Compute vector embeddings for the entire catalog at startup to avoid runtime performance penalties.
-_catalog_descriptions = [f"{p['name']} - {p['description']}" for p in _product_catalog]
-_product_embeddings = _retrieval_model.encode(_catalog_descriptions)
-logger.info("Catalog indexing complete.")
+
+def _get_index() -> tuple[RetrievalModel, torch.Tensor]:
+    """
+    Returns the loaded model alongside the catalog embedding matrix, building both
+    on first use. Indexing still happens only once, so subsequent searches stay fast.
+    """
+    global _retrieval_model, _product_embeddings
+
+    # Double-checked locking: requests arriving together during the cold start wait for
+    # a single load instead of each pulling its own copy of the weights.
+    if _retrieval_model is None or _product_embeddings is None:
+        with _load_lock:
+            if _retrieval_model is None:
+                _retrieval_model = RetrievalModel()
+                logger.info(f"Retrieval Service initialized with model: {_retrieval_model.model_name}")
+
+            if _product_embeddings is None:
+                logger.info(f"Indexing in-memory catalog with {len(_product_catalog)} items...")
+                catalog_descriptions = [f"{p['name']} - {p['description']}" for p in _product_catalog]
+                _product_embeddings = _retrieval_model.encode(catalog_descriptions)
+                logger.info("Catalog indexing complete.")
+
+    return _retrieval_model, _product_embeddings
 
 
 def search_similar_products(query: str, top_k: int = 3) -> dict:
@@ -82,11 +105,13 @@ def search_similar_products(query: str, top_k: int = 3) -> dict:
     logger.info(f"Executing semantic search for query: '{query}'")
 
     try:
+        retrieval_model, product_embeddings = _get_index()
+
         # Encode user search intent into a normalized vector.
-        query_embedding = _retrieval_model.encode([query])
+        query_embedding = retrieval_model.encode([query])
 
         # Compute cosine similarities across the catalog efficiently using broadcasted tensor operations.
-        similarities = torch.nn.functional.cosine_similarity(query_embedding, _product_embeddings)
+        similarities = torch.nn.functional.cosine_similarity(query_embedding, product_embeddings)
 
         # Extract top K indices with the highest similarity scores.
         # min() prevents out-of-bounds errors if the catalog size is smaller than top_k.
@@ -112,8 +137,8 @@ def search_similar_products(query: str, top_k: int = 3) -> dict:
             "query": query,
             "results": results,
             "metadata": {
-                "model": _retrieval_model.model_name,
-                "version": _retrieval_model.version,
+                "model": retrieval_model.model_name,
+                "version": retrieval_model.version,
                 "catalog_size": len(_product_catalog),
             },
         }
